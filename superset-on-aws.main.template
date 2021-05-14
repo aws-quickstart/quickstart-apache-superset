@@ -1,0 +1,149 @@
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# SPDX-License-Identifier: Apache-2.0
+Description: "(SO8018) - Superset on AWS offer customer a reliable, scalable and open-sourced BI applcation with least effort. Version v1.0.0"
+
+Parameters:
+  UserName:
+    Type: String
+    Description: Superset user name.
+  UserPassword:
+    Type: String
+    Description: Superset user password. Strict password policy is recommended.
+    NoEcho: True
+  WithExample:
+    Type: String
+    Default: "yes"
+    Description: >-
+      Enables or disables pre-populating official dashboard example.
+      no = DON'T pre-populate official dashboard example;
+      yes = pre-populate official dashboard example
+  InstallProphet:
+    Type: String
+    Default: "no"
+    Description: >-
+      Enables or disables Prophet library installation for Forecasting Analytics.
+      no = DON'T install Prophet for Forecasting Analytics;
+      yes = install Prophet to enable Forecasting Analytics
+  AvailabilityZones:
+    Description: 'List of Availability Zones to use for the subnets in the VPC. Note:
+      The logical order is preserved.'
+    Type: List<AWS::EC2::AvailabilityZone::Name>
+  VpcCIDR:
+    Type: String
+    Default: 192.168.0.0/16
+    Description: Please enter the IP range (CIDR notation) for this VPC
+    AllowedPattern: "(?:^$|(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2}))"
+    ConstraintDescription: "must be a valid IP CIDR range of the form x.x.x.x/x."
+    MinLength: 9
+    MaxLength: 18
+  PublicSubnet1CIDR:
+    Type: String
+    Default: 192.168.10.0/24
+    Description: Please enter the IP range (CIDR notation) for the public subnet in the first Availability Zone
+    AllowedPattern: "(?:^$|(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2}))"
+    ConstraintDescription: "must be a valid IP CIDR range of the form x.x.x.x/x."
+    MinLength: 9
+    MaxLength: 18
+  PublicSubnet2CIDR:
+    Type: String
+    Default: 192.168.11.0/24
+    Description: Please enter the IP range (CIDR notation) for the public subnet in the second Availability Zone
+    AllowedPattern: "(?:^$|(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2}))"
+    ConstraintDescription: "must be a valid IP CIDR range of the form x.x.x.x/x."
+  PrivateSubnet1CIDR:
+    Type: String
+    Default: 192.168.20.0/24
+    Description: Please enter the IP range (CIDR notation) for the private subnet in the first Availability Zone
+    AllowedPattern: "(?:^$|(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2}))"
+    ConstraintDescription: "must be a valid IP CIDR range of the form x.x.x.x/x."
+  PrivateSubnet2CIDR:
+    Type: String
+    Default: 192.168.21.0/24
+    Description: Please enter the IP range (CIDR notation) for the private subnet in the second Availability Zone
+    AllowedPattern: "(?:^$|(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2}))"
+    ConstraintDescription: "must be a valid IP CIDR range of the form x.x.x.x/x."
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: "Account Configuration, set account info"
+        Parameters:
+          - UserName
+          - UserPassword
+          - WithExample
+          - InstallProphet
+      - Label:
+          default: "Network Configuration, create new VPC for AWS ECS Fargate"
+        Parameters:
+          - AvailabilityZones
+          - VpcCIDR
+          - PublicSubnet1CIDR
+          - PublicSubnet2CIDR
+          - PrivateSubnet1CIDR
+          - PrivateSubnet2CIDR
+    ParameterLabels:
+      UserName:
+        default: "Initial Superset User Name"
+      UserPassword:
+        default: "Initial Superset User Password"
+      WithExample:
+        default: "Pre-populate example dashboard"
+      InstallProphet:
+        default: "Install Prophet library"
+      AvailabilityZones:
+        default: "Availability Zones"
+      VpcCIDR:
+        default: "AWS ECS Fargate VPC CIDR Block"
+      PublicSubnet1CIDR:
+        default: "Public Subnet for the first Availability Zone"
+      PublicSubnet2CIDR:
+        default: "Public Subnet for the second Availability Zone"
+      PrivateSubnet1CIDR:
+        default: "Private Subnet for the first Availability Zone"
+      PrivateSubnet2CIDR:
+        default: "Private Subnet for the second Availability Zone"
+Resources:
+  Vpc:
+    Type: 'AWS::CloudFormation::Stack'
+    Properties:
+      TemplateURL: https://superset-template.s3.cn-north-1.amazonaws.com.cn/aws-vpc.template
+      Parameters:
+        AvailabilityZones: !Join
+          - ','
+          - !Ref 'AvailabilityZones'
+        PublicSubnet1CIDR: !Ref 'PublicSubnet1CIDR'
+        PublicSubnet2CIDR: !Ref 'PublicSubnet2CIDR'
+        PrivateSubnet1ACIDR: !Ref 'PrivateSubnet1CIDR'
+        PrivateSubnet2ACIDR: !Ref 'PrivateSubnet2CIDR'
+        VPCCIDR: !Ref VpcCIDR
+        NumberOfAZs: 2
+
+  Superset:
+    DependsOn: Vpc
+    Type: 'AWS::CloudFormation::Stack'
+    Properties:
+      TemplateURL: https://superset-template.s3.cn-north-1.amazonaws.com.cn/superset-on-aws-new-vpc.template
+      Parameters:
+        UserName: !Ref 'UserName'
+        UserPassword: !Ref 'UserPassword'
+        WithExample: !Ref 'WithExample'
+        InstallProphet: !Ref 'InstallProphet'
+        AvailabilityZones: !Join
+          - ','
+          - !Ref 'AvailabilityZones'
+        PublicSubnet1ID: 
+          Fn::GetAtt: [Vpc, Outputs.PublicSubnet1ID]
+        PublicSubnet2ID: 
+          Fn::GetAtt: [Vpc, Outputs.PublicSubnet2ID]
+        PrivateSubnet1AID: 
+          Fn::GetAtt: [Vpc, Outputs.PrivateSubnet1AID]
+        PrivateSubnet2AID: 
+          Fn::GetAtt: [Vpc, Outputs.PrivateSubnet2AID]
+        VpcID: 
+          Fn::GetAtt: [Vpc, Outputs.VPCID]
+
+  ## superset console url
+Outputs:
+  SupersetConsole:
+    Description: SupersetConsole URL
+    Value: !GetAtt [Superset, Outputs.SupersetConsole]

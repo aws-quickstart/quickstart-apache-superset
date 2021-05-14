@@ -1,0 +1,1877 @@
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# SPDX-License-Identifier: Apache-2.0
+Description: "(SO8018) - Superset on AWS offer customer a reliable, scalable and open-sourced BI applcation with least effort. Version v1.0.0"
+
+Parameters:
+  UserName:
+    Type: String
+    Description: Superset user name.
+  UserPassword:
+    Type: String
+    Description: Superset user password. Strict password policy is recommended.
+    NoEcho: True
+  WithExample:
+    Type: String
+    Default: "yes"
+    Description: >-
+      Enables or disables pre-populating official dashboard example.
+      no = DON'T pre-populate official dashboard example;
+      yes = pre-populate official dashboard example
+  InstallProphet:
+    Type: String
+    Default: "no"
+    Description: >-
+      Enables or disables Prophet library installation for Forecasting Analytics.
+      no = DON'T install Prophet for Forecasting Analytics;
+      yes = install Prophet to enable Forecasting Analytics
+  AvailabilityZones:
+    Description: 'List of Availability Zones to use for the subnets in the VPC. Note:
+      The logical order is preserved.'
+    Type: List<AWS::EC2::AvailabilityZone::Name>
+  VpcCIDR:
+    Type: String
+    Default: 192.168.0.0/16
+    Description: Please enter the IP range (CIDR notation) for this VPC
+    AllowedPattern: "(?:^$|(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2}))"
+    ConstraintDescription: "must be a valid IP CIDR range of the form x.x.x.x/x."
+    MinLength: 9
+    MaxLength: 18
+  PublicSubnet1CIDR:
+    Type: String
+    Default: 192.168.10.0/24
+    Description: Please enter the IP range (CIDR notation) for the public subnet in the first Availability Zone
+    AllowedPattern: "(?:^$|(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2}))"
+    ConstraintDescription: "must be a valid IP CIDR range of the form x.x.x.x/x."
+    MinLength: 9
+    MaxLength: 18
+  PublicSubnet2CIDR:
+    Type: String
+    Default: 192.168.11.0/24
+    Description: Please enter the IP range (CIDR notation) for the public subnet in the second Availability Zone
+    AllowedPattern: "(?:^$|(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2}))"
+    ConstraintDescription: "must be a valid IP CIDR range of the form x.x.x.x/x."
+  PrivateSubnet1CIDR:
+    Type: String
+    Default: 192.168.20.0/24
+    Description: Please enter the IP range (CIDR notation) for the private subnet in the first Availability Zone
+    AllowedPattern: "(?:^$|(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2}))"
+    ConstraintDescription: "must be a valid IP CIDR range of the form x.x.x.x/x."
+  PrivateSubnet2CIDR:
+    Type: String
+    Default: 192.168.21.0/24
+    Description: Please enter the IP range (CIDR notation) for the private subnet in the second Availability Zone
+    AllowedPattern: "(?:^$|(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2}))"
+    ConstraintDescription: "must be a valid IP CIDR range of the form x.x.x.x/x."
+  VpcID:
+    Type: AWS::EC2::VPC::Id
+    Description: VPC Id
+  PublicSubnet1ID:
+    Type: AWS::EC2::Subnet::Id
+    Description: Public Subnet Id for the first Availability Zone
+  PublicSubnet2ID:
+    Type: AWS::EC2::Subnet::Id
+    Description: Public Subnet Id for the second Availability Zone
+  PrivateSubnet1AID:
+    Type: AWS::EC2::Subnet::Id
+    Description: Private Subnet Id for the first Availability Zone
+  PrivateSubnet2AID:
+    Type: AWS::EC2::Subnet::Id
+    Description: Private Subnet Id for the second Availability Zone
+
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: "Account Configuration, set account info"
+        Parameters:
+          - UserName
+          - UserPassword
+          - WithExample
+          - InstallProphet
+      - Label:
+          default: "Network Configuration, create new VPC for AWS ECS Fargate"
+        Parameters:
+          - AvailabilityZones
+          - VpcCIDR
+          - PublicSubnet1CIDR
+          - PublicSubnet2CIDR
+          - PrivateSubnet1CIDR
+          - PrivateSubnet2CIDR
+          - VpcID
+          - PublicSubnet1ID
+          - PublicSubnet2ID
+          - PrivateSubnet1AID
+          - PrivateSubnet2AID
+    ParameterLabels:
+      UserName:
+        default: "Initial Superset User Name"
+      UserPassword:
+        default: "Initial Superset User Password"
+      WithExample:
+        default: "Pre-populate example dashboard"
+      InstallProphet:
+        default: "Install Prophet library"
+      AvailabilityZones:
+        default: "Availability Zones"
+      VpcCIDR:
+        default: "AWS ECS Fargate VPC CIDR Block"
+      PublicSubnet1CIDR:
+        default: "Public Subnet for the first Availability Zone"
+      PublicSubnet2CIDR:
+        default: "Public Subnet for the second Availability Zone"
+      PrivateSubnet1CIDR:
+        default: "Private Subnet for the first Availability Zone"
+      PrivateSubnet2CIDR:
+        default: "Private Subnet for the second Availability Zone"
+      VpcID:
+        default: "Vpc ID"
+      PublicSubnet1ID:
+        default: "Public Subnet Id for the first Availability Zone"
+      PublicSubnet2ID:
+        default: "Public Subnet Id for the second Availability Zone"
+      PrivateSubnet1AID:
+        default: "Private Subnet Id for the first Availability Zone"
+      PrivateSubnet2AID:
+        default: "Private Subnet Id for the second Availability Zone"
+
+Resources:
+  ## Cloud Map
+  CloudMap:
+    Properties:
+      Description: Service Map for Docker Compose project supersetOnAWS
+      Name: supersetOnAWS.local
+      Vpc: !Ref VpcID
+    Type: AWS::ServiceDiscovery::PrivateDnsNamespace
+  Cluster:
+    Properties:
+      ClusterName: supersetOnAWS
+      Tags:
+      - Key: com.docker.compose.project
+        Value: supersetOnAWS
+    Type: AWS::ECS::Cluster
+
+  ## Security Group
+  Default5432Ingress:
+    Properties:
+      CidrIp: 0.0.0.0/0
+      Description: db:5432/tcp on default network
+      FromPort: 5432
+      GroupId:
+        Ref: DefaultNetwork
+      IpProtocol: TCP
+      ToPort: 5432
+    Type: AWS::EC2::SecurityGroupIngress
+  Default6379Ingress:
+    Properties:
+      CidrIp: 0.0.0.0/0
+      Description: redis:6379/tcp on default network
+      FromPort: 6379
+      GroupId:
+        Ref: DefaultNetwork
+      IpProtocol: TCP
+      ToPort: 6379
+    Type: AWS::EC2::SecurityGroupIngress
+  Default8088Ingress:
+    Properties:
+      CidrIp: 0.0.0.0/0
+      Description: superset:8088/tcp on default network
+      FromPort: 8088
+      GroupId:
+        Ref: DefaultNetwork
+      IpProtocol: TCP
+      ToPort: 8088
+    Type: AWS::EC2::SecurityGroupIngress
+  DefaultNetwork:
+    Properties:
+      GroupDescription: supersetOnAWS Security Group for default network
+      Tags:
+      - Key: com.docker.compose.project
+        Value: supersetOnAWS
+      - Key: com.docker.compose.network
+        Value: supersetOnAWS_default
+      VpcId: !Ref VpcID
+    Type: AWS::EC2::SecurityGroup
+  DefaultNetworkIngress:
+    Properties:
+      Description: Allow communication within network default
+      GroupId:
+        Ref: DefaultNetwork
+      IpProtocol: "-1"
+      SourceSecurityGroupId:
+        Ref: DefaultNetwork
+    Type: AWS::EC2::SecurityGroupIngress
+
+  ## Application Load Balancer
+  LoadBalancer:
+    Properties:
+      LoadBalancerAttributes:
+      - Key: load_balancing.cross_zone.enabled
+        Value: "true"
+      Scheme: internet-facing
+      Subnets:
+      - !Ref PublicSubnet1ID
+      - !Ref PublicSubnet2ID
+      Tags:
+      - Key: com.docker.compose.project
+        Value: supersetOnAWS
+      Type: network
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+
+  ## CloudWatch Log
+  LogGroup:
+    Properties:
+      LogGroupName: /docker-compose/supersetOnAWS1983
+    Type: AWS::Logs::LogGroup
+
+  ## ECS Service - Database
+  DbService:
+    DependsOn:
+    - DbhomeNFSMountTargetOnSubnetB
+    - DbhomeNFSMountTargetOnSubnetA
+    Properties:
+      Cluster:
+        Fn::GetAtt:
+        - Cluster
+        - Arn
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 100
+      DeploymentController:
+        Type: ECS
+      DesiredCount: 1
+      LaunchType: FARGATE
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: ENABLED
+          SecurityGroups:
+          - Ref: DefaultNetwork
+          Subnets:
+          - !Ref PrivateSubnet1AID
+          - !Ref PrivateSubnet2AID
+      PlatformVersion: 1.4.0
+      PropagateTags: SERVICE
+      SchedulingStrategy: REPLICA
+      ServiceRegistries:
+      - RegistryArn:
+          Fn::GetAtt:
+          - DbServiceDiscoveryEntry
+          - Arn
+      Tags:
+      - Key: com.docker.compose.project
+        Value: supersetOnAWS
+      - Key: com.docker.compose.service
+        Value: db
+      TaskDefinition:
+        Ref: DbTaskDefinition
+    Type: AWS::ECS::Service
+  DbServiceDiscoveryEntry:
+    Properties:
+      Description: '"db" service discovery entry in Cloud Map'
+      DnsConfig:
+        DnsRecords:
+        - TTL: 60
+          Type: A
+        RoutingPolicy: MULTIVALUE
+      HealthCheckCustomConfig:
+        FailureThreshold: 1
+      Name: db
+      NamespaceId:
+        Ref: CloudMap
+    Type: AWS::ServiceDiscovery::Service
+  DbTaskDefinition:
+    Properties:
+      ContainerDefinitions:
+      - Command:
+        # private DNS hostnames by default in format of ip-private-ipv4-address.region.compute.internal
+        - cn-north-1.compute.internal
+        # namespace name created in cloud map
+        - supersetOnAWS.local
+        Essential: false
+        Image: docker/ecs-searchdomain-sidecar:1.0
+        LogConfiguration:
+          LogDriver: awslogs
+          Options:
+            awslogs-group:
+              Ref: LogGroup
+            awslogs-region:
+              Ref: AWS::Region
+            awslogs-stream-prefix: supersetOnAWS
+        Name: Db_ResolvConf_InitContainer
+      - DependsOn:
+        - Condition: SUCCESS
+          ContainerName: Db_ResolvConf_InitContainer
+        Environment:
+        - Name: COMPOSE_PROJECT_NAME
+          Value: superset
+        - Name: CYPRESS_CONFIG
+          Value: "false"
+        - Name: DATABASE_DB
+          Value: superset
+        - Name: DATABASE_DIALECT
+          Value: postgresql
+        - Name: DATABASE_HOST
+          Value: db
+        - Name: DATABASE_PASSWORD
+          Value: superset
+        - Name: DATABASE_PORT
+          Value: "5432"
+        - Name: DATABASE_USER
+          Value: superset
+        - Name: FLASK_ENV
+          Value: development
+        - Name: POSTGRES_DB
+          Value: superset
+        - Name: POSTGRES_PASSWORD
+          Value: superset
+        - Name: POSTGRES_USER
+          Value: superset
+        - Name: PYTHONPATH
+          Value: /app/pythonpath:/app/docker/pythonpath_dev
+        - Name: REDIS_HOST
+          Value: redis
+        - Name: REDIS_PORT
+          Value: "6379"
+        - Name: SUPERSET_ENV
+          Value: development
+        - Name: SUPERSET_LOAD_EXAMPLES
+          Value: !Ref WithExample
+        - Name: SUPERSET_PORT
+          Value: "8088"
+        - Name: SUPERSET_USER
+          Value: !Ref UserName
+        - Name: SUPERSET_PASSWORD
+          Value: !Ref UserPassword
+        Essential: true
+        Image: docker.io/library/postgres:10@sha256:e5802ff7be3c818ce23924fe27e29621ba1120bfdc572232dc6cd0154f8c844f
+        LinuxParameters: {}
+        LogConfiguration:
+          LogDriver: awslogs
+          Options:
+            awslogs-group:
+              Ref: LogGroup
+            awslogs-region:
+              Ref: AWS::Region
+            awslogs-stream-prefix: supersetOnAWS
+        MountPoints:
+        - ContainerPath: /var/lib/postgresql/data
+          SourceVolume: db_home
+        Name: db
+        PortMappings:
+        - ContainerPort: 5432
+          HostPort: 5432
+          Protocol: tcp
+      Cpu: "256"
+      ExecutionRoleArn:
+        Ref: DbTaskExecutionRole
+      Family: supersetOnAWS-db
+      Memory: "512"
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+      - FARGATE
+      TaskRoleArn:
+        Ref: DbTaskRole
+      Volumes:
+      - EFSVolumeConfiguration:
+          AuthorizationConfig:
+            AccessPointId:
+              Ref: DbhomeAccessPoint
+            IAM: ENABLED
+          FilesystemId:
+            Ref: DbhomeFilesystem
+          TransitEncryption: ENABLED
+        Name: db_home
+    Type: AWS::ECS::TaskDefinition
+  DbTaskExecutionRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action:
+          - sts:AssumeRole
+          Condition: {}
+          Effect: Allow
+          Principal:
+            Service: ecs-tasks.amazonaws.com
+        Version: 2012-10-17
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+      - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+      Tags:
+      - Key: com.docker.compose.project
+        Value: supersetOnAWS
+      - Key: com.docker.compose.service
+        Value: db
+    Type: AWS::IAM::Role
+  DbTaskRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action:
+          - sts:AssumeRole
+          Condition: {}
+          Effect: Allow
+          Principal:
+            Service: ecs-tasks.amazonaws.com
+        Version: 2012-10-17
+      Policies:
+      - PolicyDocument:
+          Statement:
+          - Action:
+            - elasticfilesystem:ClientMount
+            - elasticfilesystem:ClientWrite
+            - elasticfilesystem:ClientRootAccess
+            Condition:
+              StringEquals:
+                elasticfilesystem:AccessPointArn:
+                  Ref: DbhomeAccessPoint
+            Effect: Allow
+            Principal: {}
+            Resource:
+            - Fn::GetAtt:
+              - DbhomeFilesystem
+              - Arn
+          Version: 2012-10-17
+        PolicyName: DbDbhomeVolumeMountPolicy
+      Tags:
+      - Key: com.docker.compose.project
+        Value: supersetOnAWS
+      - Key: com.docker.compose.service
+        Value: db
+    Type: AWS::IAM::Role
+  DbhomeAccessPoint:
+    Properties:
+      AccessPointTags:
+      - Key: com.docker.compose.project
+        Value: supersetOnAWS
+      - Key: com.docker.compose.volume
+        Value: db_home
+      - Key: Name
+        Value: supersetOnAWS_db_home
+      FileSystemId:
+        Ref: DbhomeFilesystem
+    Type: AWS::EFS::AccessPoint
+  DbhomeFilesystem:
+    DeletionPolicy: Delete
+    Properties:
+      Encrypted: true
+      FileSystemTags:
+      - Key: com.docker.compose.project
+        Value: supersetOnAWS
+      - Key: com.docker.compose.volume
+        Value: db_home
+      - Key: Name
+        Value: supersetOnAWS_db_home
+    Type: AWS::EFS::FileSystem
+  DbhomeNFSMountTargetOnSubnetA:
+    Properties:
+      FileSystemId:
+        Ref: DbhomeFilesystem
+      SecurityGroups:
+      - Ref: DefaultNetwork
+      SubnetId: !Ref PrivateSubnet1AID
+      # - !ImportValue 'Fn::Sub': '${AWS::StackName}-PrivateSubnet21ID'
+    Type: AWS::EFS::MountTarget
+  DbhomeNFSMountTargetOnSubnetB:
+    Properties:
+      FileSystemId:
+        Ref: DbhomeFilesystem
+      SecurityGroups:
+      - Ref: DefaultNetwork
+      SubnetId: !Ref PrivateSubnet2AID
+      # - !ImportValue 'Fn::Sub': '${AWS::StackName}-PrivateSubnet2AID'
+    Type: AWS::EFS::MountTarget
+
+  ## ECS Service - Superset redis
+  RedisAccessPoint:
+    Properties:
+      AccessPointTags:
+      - Key: com.docker.compose.project
+        Value: supersetOnAWS
+      - Key: com.docker.compose.volume
+        Value: redis
+      - Key: Name
+        Value: supersetOnAWS_redis
+      FileSystemId:
+        Ref: RedisFilesystem
+    Type: AWS::EFS::AccessPoint
+  RedisFilesystem:
+    DeletionPolicy: Delete
+    Properties:
+      Encrypted: true
+      FileSystemTags:
+      - Key: com.docker.compose.project
+        Value: supersetOnAWS
+      - Key: com.docker.compose.volume
+        Value: redis
+      - Key: Name
+        Value: supersetOnAWS_redis
+    Type: AWS::EFS::FileSystem
+  RedisNFSMountTargetOnSubnetA:
+    Properties:
+      FileSystemId:
+        Ref: RedisFilesystem
+      SecurityGroups:
+      - Ref: DefaultNetwork
+      SubnetId: !Ref PrivateSubnet1AID
+      # - !ImportValue 'Fn::Sub': '${AWS::StackName}-PrivateSubnet1AID'
+    Type: AWS::EFS::MountTarget
+  RedisNFSMountTargetOnSubnetB:
+    Properties:
+      FileSystemId:
+        Ref: RedisFilesystem
+      SecurityGroups:
+      - Ref: DefaultNetwork
+      SubnetId: !Ref PrivateSubnet2AID
+      # - !ImportValue 'Fn::Sub': '${AWS::StackName}-PrivateSubnet2AID'
+    Type: AWS::EFS::MountTarget
+  RedisService:
+    DependsOn:
+    - RedisNFSMountTargetOnSubnetB
+    - RedisNFSMountTargetOnSubnetA
+    Properties:
+      Cluster:
+        Fn::GetAtt:
+        - Cluster
+        - Arn
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 100
+      DeploymentController:
+        Type: ECS
+      DesiredCount: 1
+      LaunchType: FARGATE
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: ENABLED
+          SecurityGroups:
+          - Ref: DefaultNetwork
+          Subnets:
+          - !Ref PrivateSubnet1AID
+          - !Ref PrivateSubnet2AID
+      PlatformVersion: 1.4.0
+      PropagateTags: SERVICE
+      SchedulingStrategy: REPLICA
+      ServiceRegistries:
+      - RegistryArn:
+          Fn::GetAtt:
+          - RedisServiceDiscoveryEntry
+          - Arn
+      Tags:
+      - Key: com.docker.compose.project
+        Value: supersetOnAWS
+      - Key: com.docker.compose.service
+        Value: redis
+      TaskDefinition:
+        Ref: RedisTaskDefinition
+    Type: AWS::ECS::Service
+  RedisServiceDiscoveryEntry:
+    Properties:
+      Description: '"redis" service discovery entry in Cloud Map'
+      DnsConfig:
+        DnsRecords:
+        - TTL: 60
+          Type: A
+        RoutingPolicy: MULTIVALUE
+      HealthCheckCustomConfig:
+        FailureThreshold: 1
+      Name: redis
+      NamespaceId:
+        Ref: CloudMap
+    Type: AWS::ServiceDiscovery::Service
+  RedisTaskDefinition:
+    Properties:
+      ContainerDefinitions:
+      - Command:
+        - cn-north-1.compute.internal
+        - supersetOnAWS.local
+        Essential: false
+        Image: docker/ecs-searchdomain-sidecar:1.0
+        LogConfiguration:
+          LogDriver: awslogs
+          Options:
+            awslogs-group:
+              Ref: LogGroup
+            awslogs-region:
+              Ref: AWS::Region
+            awslogs-stream-prefix: supersetOnAWS
+        Name: Redis_ResolvConf_InitContainer
+      - DependsOn:
+        - Condition: SUCCESS
+          ContainerName: Redis_ResolvConf_InitContainer
+        Essential: true
+        Image: docker.io/library/redis:latest@sha256:2d17fb90c268b1c7799234216c875490a35fe8fa13fbc5495b7247d93e77255e
+        LinuxParameters: {}
+        LogConfiguration:
+          LogDriver: awslogs
+          Options:
+            awslogs-group:
+              Ref: LogGroup
+            awslogs-region:
+              Ref: AWS::Region
+            awslogs-stream-prefix: supersetOnAWS
+        MountPoints:
+        - ContainerPath: /data
+          SourceVolume: redis
+        Name: redis
+        PortMappings:
+        - ContainerPort: 6379
+          HostPort: 6379
+          Protocol: tcp
+      Cpu: "256"
+      ExecutionRoleArn:
+        Ref: RedisTaskExecutionRole
+      Family: supersetOnAWS-redis
+      Memory: "512"
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+      - FARGATE
+      TaskRoleArn:
+        Ref: RedisTaskRole
+      Volumes:
+      - EFSVolumeConfiguration:
+          AuthorizationConfig:
+            AccessPointId:
+              Ref: RedisAccessPoint
+            IAM: ENABLED
+          FilesystemId:
+            Ref: RedisFilesystem
+          TransitEncryption: ENABLED
+        Name: redis
+    Type: AWS::ECS::TaskDefinition
+  RedisTaskExecutionRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action:
+          - sts:AssumeRole
+          Condition: {}
+          Effect: Allow
+          Principal:
+            Service: ecs-tasks.amazonaws.com
+        Version: 2012-10-17
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+      - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+      Tags:
+      - Key: com.docker.compose.project
+        Value: supersetOnAWS
+      - Key: com.docker.compose.service
+        Value: redis
+    Type: AWS::IAM::Role
+  RedisTaskRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action:
+          - sts:AssumeRole
+          Condition: {}
+          Effect: Allow
+          Principal:
+            Service: ecs-tasks.amazonaws.com
+        Version: 2012-10-17
+      Policies:
+      - PolicyDocument:
+          Statement:
+          - Action:
+            - elasticfilesystem:ClientMount
+            - elasticfilesystem:ClientWrite
+            - elasticfilesystem:ClientRootAccess
+            Condition:
+              StringEquals:
+                elasticfilesystem:AccessPointArn:
+                  Ref: RedisAccessPoint
+            Effect: Allow
+            Principal: {}
+            Resource:
+            - Fn::GetAtt:
+              - RedisFilesystem
+              - Arn
+          Version: 2012-10-17
+        PolicyName: RedisRedisVolumeMountPolicy
+      Tags:
+      - Key: com.docker.compose.project
+        Value: supersetOnAWS
+      - Key: com.docker.compose.service
+        Value: redis
+    Type: AWS::IAM::Role
+
+  ## ECS Service - Superset app
+  SupersetService:
+    DependsOn:
+    - SupersetTCP8088Listener
+    - DbService
+    - RedisService
+    - SupersethomeNFSMountTargetOnSubnetB
+    - SupersethomeNFSMountTargetOnSubnetA
+    Properties:
+      Cluster:
+        Fn::GetAtt:
+        - Cluster
+        - Arn
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 100
+      DeploymentController:
+        Type: ECS
+      DesiredCount: 1
+      LaunchType: FARGATE
+      LoadBalancers:
+      - ContainerName: superset
+        ContainerPort: 8088
+        TargetGroupArn:
+          Ref: SupersetTCP8088TargetGroup
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: ENABLED
+          SecurityGroups:
+          - Ref: DefaultNetwork
+          Subnets:
+          - !Ref PrivateSubnet1AID
+          - !Ref PrivateSubnet2AID
+      PlatformVersion: 1.4.0
+      PropagateTags: SERVICE
+      SchedulingStrategy: REPLICA
+      ServiceRegistries:
+      - RegistryArn:
+          Fn::GetAtt:
+          - SupersetServiceDiscoveryEntry
+          - Arn
+      Tags:
+      - Key: com.docker.compose.project
+        Value: supersetOnAWS
+      - Key: com.docker.compose.service
+        Value: superset
+      TaskDefinition:
+        Ref: SupersetTaskDefinition
+    Type: AWS::ECS::Service
+  SupersetServiceDiscoveryEntry:
+    Properties:
+      Description: '"superset" service discovery entry in Cloud Map'
+      DnsConfig:
+        DnsRecords:
+        - TTL: 60
+          Type: A
+        RoutingPolicy: MULTIVALUE
+      HealthCheckCustomConfig:
+        FailureThreshold: 1
+      Name: superset
+      NamespaceId:
+        Ref: CloudMap
+    Type: AWS::ServiceDiscovery::Service
+  SupersetTCP8088Listener:
+    Properties:
+      DefaultActions:
+      - ForwardConfig:
+          TargetGroups:
+          - TargetGroupArn:
+              Ref: SupersetTCP8088TargetGroup
+        Type: forward
+      LoadBalancerArn:
+        Ref: LoadBalancer
+      Port: 8088
+      Protocol: TCP
+    Type: AWS::ElasticLoadBalancingV2::Listener
+  SupersetTCP8088TargetGroup:
+    Properties:
+      Port: 8088
+      Protocol: TCP
+      Tags:
+      - Key: com.docker.compose.project
+        Value: supersetOnAWS
+      TargetType: ip
+      VpcId: !Ref VpcID
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+  SupersetTaskDefinition:
+    Properties:
+      ContainerDefinitions:
+      - Command:
+        - cn-north-1.compute.internal
+        - supersetOnAWS.local
+        Essential: false
+        Image: docker/ecs-searchdomain-sidecar:1.0
+        LogConfiguration:
+          LogDriver: awslogs
+          Options:
+            awslogs-group:
+              Ref: LogGroup
+            awslogs-region:
+              Ref: AWS::Region
+            awslogs-stream-prefix: supersetOnAWS
+        Name: Superset_ResolvConf_InitContainer
+      - Command:
+        - /app/docker/docker-bootstrap.sh
+        - app
+        DependsOn:
+        - Condition: SUCCESS
+          ContainerName: Superset_ResolvConf_InitContainer
+        Environment:
+        - Name: COMPOSE_PROJECT_NAME
+          Value: superset
+        - Name: CYPRESS_CONFIG
+        - Name: DATABASE_DB
+          Value: superset
+        - Name: DATABASE_DIALECT
+          Value: postgresql
+        - Name: DATABASE_HOST
+          Value: db
+        - Name: DATABASE_PASSWORD
+          Value: superset
+        - Name: DATABASE_PORT
+          Value: "5432"
+        - Name: DATABASE_USER
+          Value: superset
+        - Name: FLASK_ENV
+          Value: development
+        - Name: POSTGRES_DB
+          Value: superset
+        - Name: POSTGRES_PASSWORD
+          Value: superset
+        - Name: POSTGRES_USER
+          Value: superset
+        - Name: PYTHONPATH
+          Value: /app/pythonpath:/app/docker/pythonpath_dev
+        - Name: REDIS_HOST
+          Value: redis
+        - Name: REDIS_PORT
+          Value: "6379"
+        - Name: SUPERSET_ENV
+          Value: development
+        - Name: SUPERSET_LOAD_EXAMPLES
+          Value: !Ref WithExample
+        - Name: SUPERSET_PORT
+          Value: "8088"
+        - Name: SUPERSET_USER
+          Value: !Ref UserName
+        - Name: SUPERSET_PASSWORD
+          Value: !Ref UserPassword
+        - Name: InstallProphet
+          Value: !Ref InstallProphet
+        Essential: true
+        Image: public.ecr.aws/p9r6s5p7/superset:latest
+        LinuxParameters: {}
+        LogConfiguration:
+          LogDriver: awslogs
+          Options:
+            awslogs-group:
+              Ref: LogGroup
+            awslogs-region:
+              Ref: AWS::Region
+            awslogs-stream-prefix: supersetOnAWS
+        MountPoints:
+        - ContainerPath: /app/superset_home
+          SourceVolume: superset_home
+        Name: superset
+        PortMappings:
+        - ContainerPort: 8088
+          HostPort: 8088
+          Protocol: tcp
+        User: root
+      Cpu: "4096"
+      ExecutionRoleArn:
+        Ref: SupersetTaskExecutionRole
+      Family: supersetOnAWS-superset
+      Memory: "16384"
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+      - FARGATE
+      TaskRoleArn:
+        Ref: SupersetTaskRole
+      Volumes:
+      - EFSVolumeConfiguration:
+          AuthorizationConfig:
+            AccessPointId:
+              Ref: SupersethomeAccessPoint
+            IAM: ENABLED
+          FilesystemId:
+            Ref: SupersethomeFilesystem
+          TransitEncryption: ENABLED
+        Name: superset_home
+    Type: AWS::ECS::TaskDefinition
+  SupersetTaskExecutionRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action:
+          - sts:AssumeRole
+          Condition: {}
+          Effect: Allow
+          Principal:
+            Service: ecs-tasks.amazonaws.com
+        Version: 2012-10-17
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+      - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+      Tags:
+      - Key: com.docker.compose.project
+        Value: supersetOnAWS
+      - Key: com.docker.compose.service
+        Value: superset
+    Type: AWS::IAM::Role
+  SupersetTaskRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action:
+          - sts:AssumeRole
+          Condition: {}
+          Effect: Allow
+          Principal:
+            Service: ecs-tasks.amazonaws.com
+        Version: 2012-10-17
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/AmazonS3FullAccess
+      - arn:aws:iam::aws:policy/AmazonAthenaFullAccess
+      Policies:
+      - PolicyDocument:
+          Statement:
+          - Action:
+            - elasticfilesystem:ClientMount
+            - elasticfilesystem:ClientWrite
+            - elasticfilesystem:ClientRootAccess
+            Condition:
+              StringEquals:
+                elasticfilesystem:AccessPointArn:
+                  Ref: SupersethomeAccessPoint
+            Effect: Allow
+            Principal: {}
+            Resource:
+            - Fn::GetAtt:
+              - SupersethomeFilesystem
+              - Arn
+          Version: 2012-10-17
+        PolicyName: SupersetSupersethomeVolumeMountPolicy
+      Tags:
+      - Key: com.docker.compose.project
+        Value: supersetOnAWS
+      - Key: com.docker.compose.service
+        Value: superset
+    Type: AWS::IAM::Role
+  SupersethomeAccessPoint:
+    Properties:
+      AccessPointTags:
+      - Key: com.docker.compose.project
+        Value: supersetOnAWS
+      - Key: com.docker.compose.volume
+        Value: superset_home
+      - Key: Name
+        Value: supersetOnAWS_superset_home
+      FileSystemId:
+        Ref: SupersethomeFilesystem
+    Type: AWS::EFS::AccessPoint
+  SupersethomeFilesystem:
+    DeletionPolicy: Delete
+    Properties:
+      Encrypted: true
+      FileSystemTags:
+      - Key: com.docker.compose.project
+        Value: supersetOnAWS
+      - Key: com.docker.compose.volume
+        Value: superset_home
+      - Key: Name
+        Value: supersetOnAWS_superset_home
+    Type: AWS::EFS::FileSystem
+  SupersethomeNFSMountTargetOnSubnetA:
+    Properties:
+      FileSystemId:
+        Ref: SupersethomeFilesystem
+      SecurityGroups:
+      - Ref: DefaultNetwork
+      SubnetId: !Ref PrivateSubnet1AID
+      # - !ImportValue 'Fn::Sub': '${AWS::StackName}-PrivateSubnet1AID'
+    Type: AWS::EFS::MountTarget
+  SupersethomeNFSMountTargetOnSubnetB:
+    Properties:
+      FileSystemId:
+        Ref: SupersethomeFilesystem
+      SecurityGroups:
+      - Ref: DefaultNetwork
+      SubnetId: !Ref PrivateSubnet2AID
+      # - !ImportValue 'Fn::Sub': '${AWS::StackName}-PrivateSubnet2AID'
+    Type: AWS::EFS::MountTarget
+
+  ## ECS Service - Superset init
+  SupersetinitService:
+    DependsOn:
+    - DbService
+    - RedisService
+    - SupersethomeNFSMountTargetOnSubnetB
+    - SupersethomeNFSMountTargetOnSubnetA
+    Properties:
+      Cluster:
+        Fn::GetAtt:
+        - Cluster
+        - Arn
+      ServiceName: "supersetInitService"
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 100
+      DeploymentController:
+        Type: ECS
+      DesiredCount: 1
+      LaunchType: FARGATE
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: ENABLED
+          SecurityGroups:
+          - Ref: DefaultNetwork
+          Subnets:
+          - !Ref PrivateSubnet1AID
+          - !Ref PrivateSubnet2AID
+      PlatformVersion: 1.4.0
+      PropagateTags: SERVICE
+      SchedulingStrategy: REPLICA
+      ServiceRegistries:
+      - RegistryArn:
+          Fn::GetAtt:
+          - SupersetinitServiceDiscoveryEntry
+          - Arn
+      Tags:
+      - Key: com.docker.compose.project
+        Value: supersetOnAWS
+      - Key: com.docker.compose.service
+        Value: superset-init
+      TaskDefinition:
+        Ref: SupersetinitTaskDefinition
+    Type: AWS::ECS::Service
+  SupersetinitServiceDiscoveryEntry:
+    Properties:
+      Description: '"superset-init" service discovery entry in Cloud Map'
+      DnsConfig:
+        DnsRecords:
+        - TTL: 60
+          Type: A
+        RoutingPolicy: MULTIVALUE
+      HealthCheckCustomConfig:
+        FailureThreshold: 1
+      Name: superset-init
+      NamespaceId:
+        Ref: CloudMap
+    Type: AWS::ServiceDiscovery::Service
+  SupersetinitTaskDefinition:
+    Properties:
+      ContainerDefinitions:
+      - Command:
+        - cn-north-1.compute.internal
+        - supersetOnAWS.local
+        Essential: false
+        Image: docker/ecs-searchdomain-sidecar:1.0
+        LogConfiguration:
+          LogDriver: awslogs
+          Options:
+            awslogs-group:
+              Ref: LogGroup
+            awslogs-region:
+              Ref: AWS::Region
+            awslogs-stream-prefix: supersetOnAWS
+        Name: Supersetinit_ResolvConf_InitContainer
+      - Command:
+        - /app/docker/docker-init.sh
+        DependsOn:
+        - Condition: SUCCESS
+          ContainerName: Supersetinit_ResolvConf_InitContainer
+        Environment:
+        - Name: COMPOSE_PROJECT_NAME
+          Value: superset
+        - Name: CYPRESS_CONFIG
+        - Name: DATABASE_DB
+          Value: superset
+        - Name: DATABASE_DIALECT
+          Value: postgresql
+        - Name: DATABASE_HOST
+          Value: db
+        - Name: DATABASE_PASSWORD
+          Value: superset
+        - Name: DATABASE_PORT
+          Value: "5432"
+        - Name: DATABASE_USER
+          Value: superset
+        - Name: FLASK_ENV
+          Value: development
+        - Name: POSTGRES_DB
+          Value: superset
+        - Name: POSTGRES_PASSWORD
+          Value: superset
+        - Name: POSTGRES_USER
+          Value: superset
+        - Name: PYTHONPATH
+          Value: /app/pythonpath:/app/docker/pythonpath_dev
+        - Name: REDIS_HOST
+          Value: redis
+        - Name: REDIS_PORT
+          Value: "6379"
+        - Name: SUPERSET_ENV
+          Value: development
+        - Name: SUPERSET_LOAD_EXAMPLES
+          Value: !Ref WithExample
+        - Name: SUPERSET_PORT
+          Value: "8088"
+        - Name: SUPERSET_USER
+          Value: !Ref UserName
+        - Name: SUPERSET_PASSWORD
+          Value: !Ref UserPassword
+        Essential: false
+        Image: public.ecr.aws/p9r6s5p7/superset:latest
+        LinuxParameters: {}
+        LogConfiguration:
+          LogDriver: awslogs
+          Options:
+            awslogs-group:
+              Ref: LogGroup
+            awslogs-region:
+              Ref: AWS::Region
+            awslogs-stream-prefix: supersetOnAWS
+        MountPoints:
+        - ContainerPath: /app/superset_home
+          SourceVolume: superset_home
+        Name: superset-init
+        User: root
+      - Command:
+        - ecs
+        - update-service
+        - --cluster
+        - supersetOnAWS
+        - --service
+        - supersetInitService
+        - --desired-count
+        - 0
+        DependsOn:
+        - Condition: SUCCESS
+          ContainerName: superset-init
+        Essential: true
+        Image: amazon/aws-cli
+        LogConfiguration:
+          LogDriver: awslogs
+          Options:
+            awslogs-group:
+              Ref: LogGroup
+            awslogs-region:
+              Ref: AWS::Region
+            awslogs-stream-prefix: supersetOnAWS
+        Name: superset-init-cleanup
+      Cpu: "512"
+      ExecutionRoleArn:
+        Ref: SupersetinitTaskExecutionRole
+      Family: supersetOnAWS-superset-init
+      Memory: "1024"
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+      - FARGATE
+      TaskRoleArn:
+        Ref: SupersetinitTaskRole
+      Volumes:
+      - EFSVolumeConfiguration:
+          AuthorizationConfig:
+            AccessPointId:
+              Ref: SupersethomeAccessPoint
+            IAM: ENABLED
+          FilesystemId:
+            Ref: SupersethomeFilesystem
+          TransitEncryption: ENABLED
+        Name: superset_home
+    Type: AWS::ECS::TaskDefinition
+  SupersetinitTaskExecutionRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action:
+          - sts:AssumeRole
+          Condition: {}
+          Effect: Allow
+          Principal:
+            Service: ecs-tasks.amazonaws.com
+        Version: 2012-10-17
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+      - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+      Tags:
+      - Key: com.docker.compose.project
+        Value: supersetOnAWS
+      - Key: com.docker.compose.service
+        Value: superset-init
+    Type: AWS::IAM::Role
+  SupersetinitTaskRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action:
+          - sts:AssumeRole
+          Condition: {}
+          Effect: Allow
+          Principal:
+            Service: ecs-tasks.amazonaws.com
+        Version: 2012-10-17
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/AmazonECS_FullAccess
+      Policies:
+      - PolicyDocument:
+          Statement:
+          - Action:
+            - elasticfilesystem:ClientMount
+            - elasticfilesystem:ClientWrite
+            - elasticfilesystem:ClientRootAccess
+            Condition:
+              StringEquals:
+                elasticfilesystem:AccessPointArn:
+                  Ref: SupersethomeAccessPoint
+            Effect: Allow
+            Principal: {}
+            Resource:
+            - Fn::GetAtt:
+              - SupersethomeFilesystem
+              - Arn
+          Version: 2012-10-17
+        PolicyName: SupersetinitSupersethomeVolumeMountPolicy
+      Tags:
+      - Key: com.docker.compose.project
+        Value: supersetOnAWS
+      - Key: com.docker.compose.service
+        Value: superset-init
+    Type: AWS::IAM::Role
+
+  ## ECS Service - Superset node
+  SupersetnodeService:
+    DependsOn:
+    - DbService
+    - RedisService
+    - SupersethomeNFSMountTargetOnSubnetB
+    - SupersethomeNFSMountTargetOnSubnetA
+    Properties:
+      Cluster:
+        Fn::GetAtt:
+        - Cluster
+        - Arn
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 100
+      DeploymentController:
+        Type: ECS
+      DesiredCount: 1
+      LaunchType: FARGATE
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: ENABLED
+          SecurityGroups:
+          - Ref: DefaultNetwork
+          Subnets:
+          - !Ref PrivateSubnet1AID
+          - !Ref PrivateSubnet2AID
+      PlatformVersion: 1.4.0
+      PropagateTags: SERVICE
+      SchedulingStrategy: REPLICA
+      ServiceRegistries:
+      - RegistryArn:
+          Fn::GetAtt:
+          - SupersetnodeServiceDiscoveryEntry
+          - Arn
+      Tags:
+      - Key: com.docker.compose.project
+        Value: supersetOnAWS
+      - Key: com.docker.compose.service
+        Value: superset-node
+      TaskDefinition:
+        Ref: SupersetnodeTaskDefinition
+    Type: AWS::ECS::Service
+  SupersetnodeServiceDiscoveryEntry:
+    Properties:
+      Description: '"superset-node" service discovery entry in Cloud Map'
+      DnsConfig:
+        DnsRecords:
+        - TTL: 60
+          Type: A
+        RoutingPolicy: MULTIVALUE
+      HealthCheckCustomConfig:
+        FailureThreshold: 1
+      Name: superset-node
+      NamespaceId:
+        Ref: CloudMap
+    Type: AWS::ServiceDiscovery::Service
+  SupersetnodeTaskDefinition:
+    Properties:
+      ContainerDefinitions:
+      - Command:
+        - cn-north-1.compute.internal
+        - supersetOnAWS.local
+        Essential: false
+        Image: docker/ecs-searchdomain-sidecar:1.0
+        LogConfiguration:
+          LogDriver: awslogs
+          Options:
+            awslogs-group:
+              Ref: LogGroup
+            awslogs-region:
+              Ref: AWS::Region
+            awslogs-stream-prefix: supersetOnAWS
+        Name: Supersetnode_ResolvConf_InitContainer
+      - Command:
+        - /app/docker/docker-frontend.sh
+        DependsOn:
+        - Condition: SUCCESS
+          ContainerName: Supersetnode_ResolvConf_InitContainer
+        Environment:
+        - Name: COMPOSE_PROJECT_NAME
+          Value: superset
+        - Name: CYPRESS_CONFIG
+          Value: "false"
+        - Name: DATABASE_DB
+          Value: superset
+        - Name: DATABASE_DIALECT
+          Value: postgresql
+        - Name: DATABASE_HOST
+          Value: db
+        - Name: DATABASE_PASSWORD
+          Value: superset
+        - Name: DATABASE_PORT
+          Value: "5432"
+        - Name: DATABASE_USER
+          Value: superset
+        - Name: FLASK_ENV
+          Value: development
+        - Name: POSTGRES_DB
+          Value: superset
+        - Name: POSTGRES_PASSWORD
+          Value: superset
+        - Name: POSTGRES_USER
+          Value: superset
+        - Name: PYTHONPATH
+          Value: /app/pythonpath:/app/docker/pythonpath_dev
+        - Name: REDIS_HOST
+          Value: redis
+        - Name: REDIS_PORT
+          Value: "6379"
+        - Name: SUPERSET_ENV
+          Value: development
+        - Name: SUPERSET_LOAD_EXAMPLES
+          Value: !Ref WithExample
+        - Name: SUPERSET_PORT
+          Value: "8088"
+        - Name: SUPERSET_USER
+          Value: !Ref UserName
+        - Name: SUPERSET_PASSWORD
+          Value: !Ref UserPassword
+        Essential: true
+        Image: public.ecr.aws/p9r6s5p7/superset-node:latest
+        LinuxParameters: {}
+        LogConfiguration:
+          LogDriver: awslogs
+          Options:
+            awslogs-group:
+              Ref: LogGroup
+            awslogs-region:
+              Ref: AWS::Region
+            awslogs-stream-prefix: supersetOnAWS
+        MountPoints:
+        - ContainerPath: /app/superset_home
+          SourceVolume: superset_home
+        Name: superset-node
+      Cpu: "4096"
+      ExecutionRoleArn:
+        Ref: SupersetnodeTaskExecutionRole
+      Family: supersetOnAWS-superset-node
+      Memory: "8192"
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+      - FARGATE
+      TaskRoleArn:
+        Ref: SupersetnodeTaskRole
+      Volumes:
+      - EFSVolumeConfiguration:
+          AuthorizationConfig:
+            AccessPointId:
+              Ref: SupersethomeAccessPoint
+            IAM: ENABLED
+          FilesystemId:
+            Ref: SupersethomeFilesystem
+          TransitEncryption: ENABLED
+        Name: superset_home
+    Type: AWS::ECS::TaskDefinition
+  SupersetnodeTaskExecutionRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action:
+          - sts:AssumeRole
+          Condition: {}
+          Effect: Allow
+          Principal:
+            Service: ecs-tasks.amazonaws.com
+        Version: 2012-10-17
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+      - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+      Tags:
+      - Key: com.docker.compose.project
+        Value: supersetOnAWS
+      - Key: com.docker.compose.service
+        Value: superset-node
+    Type: AWS::IAM::Role
+  SupersetnodeTaskRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action:
+          - sts:AssumeRole
+          Condition: {}
+          Effect: Allow
+          Principal:
+            Service: ecs-tasks.amazonaws.com
+        Version: 2012-10-17
+      Policies:
+      - PolicyDocument:
+          Statement:
+          - Action:
+            - elasticfilesystem:ClientMount
+            - elasticfilesystem:ClientWrite
+            - elasticfilesystem:ClientRootAccess
+            Condition:
+              StringEquals:
+                elasticfilesystem:AccessPointArn:
+                  Ref: SupersethomeAccessPoint
+            Effect: Allow
+            Principal: {}
+            Resource:
+            - Fn::GetAtt:
+              - SupersethomeFilesystem
+              - Arn
+          Version: 2012-10-17
+        PolicyName: SupersetnodeSupersethomeVolumeMountPolicy
+      Tags:
+      - Key: com.docker.compose.project
+        Value: supersetOnAWS
+      - Key: com.docker.compose.service
+        Value: superset-node
+    Type: AWS::IAM::Role
+
+  ## ECS Service - Superset celery worker
+  SupersetworkerService:
+    DependsOn:
+    - DbService
+    - RedisService
+    - SupersethomeNFSMountTargetOnSubnetB
+    - SupersethomeNFSMountTargetOnSubnetA
+    Properties:
+      Cluster:
+        Fn::GetAtt:
+        - Cluster
+        - Arn
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 100
+      DeploymentController:
+        Type: ECS
+      DesiredCount: 1
+      LaunchType: FARGATE
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: ENABLED
+          SecurityGroups:
+          - Ref: DefaultNetwork
+          Subnets:
+          - !Ref PrivateSubnet1AID
+          - !Ref PrivateSubnet2AID
+      PlatformVersion: 1.4.0
+      PropagateTags: SERVICE
+      SchedulingStrategy: REPLICA
+      ServiceRegistries:
+      - RegistryArn:
+          Fn::GetAtt:
+          - SupersetworkerServiceDiscoveryEntry
+          - Arn
+      Tags:
+      - Key: com.docker.compose.project
+        Value: supersetOnAWS
+      - Key: com.docker.compose.service
+        Value: superset-worker
+      TaskDefinition:
+        Ref: SupersetworkerTaskDefinition
+    Type: AWS::ECS::Service
+  SupersetworkerServiceDiscoveryEntry:
+    Properties:
+      Description: '"superset-worker" service discovery entry in Cloud Map'
+      DnsConfig:
+        DnsRecords:
+        - TTL: 60
+          Type: A
+        RoutingPolicy: MULTIVALUE
+      HealthCheckCustomConfig:
+        FailureThreshold: 1
+      Name: superset-worker
+      NamespaceId:
+        Ref: CloudMap
+    Type: AWS::ServiceDiscovery::Service
+  SupersetworkerTaskDefinition:
+    Properties:
+      ContainerDefinitions:
+      - Command:
+        - cn-north-1.compute.internal
+        - supersetOnAWS.local
+        Essential: false
+        Image: docker/ecs-searchdomain-sidecar:1.0
+        LogConfiguration:
+          LogDriver: awslogs
+          Options:
+            awslogs-group:
+              Ref: LogGroup
+            awslogs-region:
+              Ref: AWS::Region
+            awslogs-stream-prefix: supersetOnAWS
+        Name: Supersetworker_ResolvConf_InitContainer
+      - Command:
+        - /app/docker/docker-bootstrap.sh
+        - worker
+        DependsOn:
+        - Condition: SUCCESS
+          ContainerName: Supersetworker_ResolvConf_InitContainer
+        Environment:
+        - Name: COMPOSE_PROJECT_NAME
+          Value: superset
+        - Name: CYPRESS_CONFIG
+          Value: "false"
+        - Name: DATABASE_DB
+          Value: superset
+        - Name: DATABASE_DIALECT
+          Value: postgresql
+        - Name: DATABASE_HOST
+          Value: db
+        - Name: DATABASE_PASSWORD
+          Value: superset
+        - Name: DATABASE_PORT
+          Value: "5432"
+        - Name: DATABASE_USER
+          Value: superset
+        - Name: FLASK_ENV
+          Value: development
+        - Name: POSTGRES_DB
+          Value: superset
+        - Name: POSTGRES_PASSWORD
+          Value: superset
+        - Name: POSTGRES_USER
+          Value: superset
+        - Name: PYTHONPATH
+          Value: /app/pythonpath:/app/docker/pythonpath_dev
+        - Name: REDIS_HOST
+          Value: redis
+        - Name: REDIS_PORT
+          Value: "6379"
+        - Name: SUPERSET_ENV
+          Value: development
+        - Name: SUPERSET_LOAD_EXAMPLES
+          Value: !Ref WithExample
+        - Name: SUPERSET_PORT
+          Value: "8088"
+        - Name: SUPERSET_USER
+          Value: !Ref UserName
+        - Name: SUPERSET_PASSWORD
+          Value: !Ref UserPassword
+        Essential: true
+        Image: public.ecr.aws/p9r6s5p7/superset:latest
+        LinuxParameters: {}
+        LogConfiguration:
+          LogDriver: awslogs
+          Options:
+            awslogs-group:
+              Ref: LogGroup
+            awslogs-region:
+              Ref: AWS::Region
+            awslogs-stream-prefix: supersetOnAWS
+        MountPoints:
+        - ContainerPath: /app/superset_home
+          SourceVolume: superset_home
+        Name: superset-worker
+        User: root
+      Cpu: "4096"
+      ExecutionRoleArn:
+        Ref: SupersetworkerTaskExecutionRole
+      Family: supersetOnAWS-superset-worker
+      Memory: "16384"
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+      - FARGATE
+      TaskRoleArn:
+        Ref: SupersetworkerTaskRole
+      Volumes:
+      - EFSVolumeConfiguration:
+          AuthorizationConfig:
+            AccessPointId:
+              Ref: SupersethomeAccessPoint
+            IAM: ENABLED
+          FilesystemId:
+            Ref: SupersethomeFilesystem
+          TransitEncryption: ENABLED
+        Name: superset_home
+    Type: AWS::ECS::TaskDefinition
+  SupersetworkerTaskExecutionRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action:
+          - sts:AssumeRole
+          Condition: {}
+          Effect: Allow
+          Principal:
+            Service: ecs-tasks.amazonaws.com
+        Version: 2012-10-17
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+      - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+      Tags:
+      - Key: com.docker.compose.project
+        Value: supersetOnAWS
+      - Key: com.docker.compose.service
+        Value: superset-worker
+    Type: AWS::IAM::Role
+  SupersetworkerTaskRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action:
+          - sts:AssumeRole
+          Condition: {}
+          Effect: Allow
+          Principal:
+            Service: ecs-tasks.amazonaws.com
+        Version: 2012-10-17
+      Policies:
+      - PolicyDocument:
+          Statement:
+          - Action:
+            - elasticfilesystem:ClientMount
+            - elasticfilesystem:ClientWrite
+            - elasticfilesystem:ClientRootAccess
+            Condition:
+              StringEquals:
+                elasticfilesystem:AccessPointArn:
+                  Ref: SupersethomeAccessPoint
+            Effect: Allow
+            Principal: {}
+            Resource:
+            - Fn::GetAtt:
+              - SupersethomeFilesystem
+              - Arn
+          Version: 2012-10-17
+        PolicyName: SupersetworkerSupersethomeVolumeMountPolicy
+      Tags:
+      - Key: com.docker.compose.project
+        Value: supersetOnAWS
+      - Key: com.docker.compose.service
+        Value: superset-worker
+    Type: AWS::IAM::Role
+
+  ## ECS Service - Superset celery beat
+  SupersetworkerbeatService:
+    DependsOn:
+    - DbService
+    - RedisService
+    - SupersethomeNFSMountTargetOnSubnetB
+    - SupersethomeNFSMountTargetOnSubnetA
+    Properties:
+      Cluster:
+        Fn::GetAtt:
+        - Cluster
+        - Arn
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 100
+      DeploymentController:
+        Type: ECS
+      DesiredCount: 1
+      LaunchType: FARGATE
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: ENABLED
+          SecurityGroups:
+          - Ref: DefaultNetwork
+          Subnets:
+          - !Ref PrivateSubnet1AID
+          - !Ref PrivateSubnet2AID
+      PlatformVersion: 1.4.0
+      PropagateTags: SERVICE
+      SchedulingStrategy: REPLICA
+      ServiceRegistries:
+      - RegistryArn:
+          Fn::GetAtt:
+          - SupersetworkerbeatServiceDiscoveryEntry
+          - Arn
+      Tags:
+      - Key: com.docker.compose.project
+        Value: supersetOnAWS
+      - Key: com.docker.compose.service
+        Value: superset-worker-beat
+      TaskDefinition:
+        Ref: SupersetworkerbeatTaskDefinition
+    Type: AWS::ECS::Service
+  SupersetworkerbeatServiceDiscoveryEntry:
+    Properties:
+      Description: '"superset-worker-beat" service discovery entry in Cloud Map'
+      DnsConfig:
+        DnsRecords:
+        - TTL: 60
+          Type: A
+        RoutingPolicy: MULTIVALUE
+      HealthCheckCustomConfig:
+        FailureThreshold: 1
+      Name: superset-worker-beat
+      NamespaceId:
+        Ref: CloudMap
+    Type: AWS::ServiceDiscovery::Service
+  SupersetworkerbeatTaskDefinition:
+    Properties:
+      ContainerDefinitions:
+      - Command:
+        - cn-north-1.compute.internal
+        - supersetOnAWS.local
+        Essential: false
+        Image: docker/ecs-searchdomain-sidecar:1.0
+        LogConfiguration:
+          LogDriver: awslogs
+          Options:
+            awslogs-group:
+              Ref: LogGroup
+            awslogs-region:
+              Ref: AWS::Region
+            awslogs-stream-prefix: supersetOnAWS
+        Name: Supersetworkerbeat_ResolvConf_InitContainer
+      - Command:
+        - /app/docker/docker-bootstrap.sh
+        - beat
+        DependsOn:
+        - Condition: SUCCESS
+          ContainerName: Supersetworkerbeat_ResolvConf_InitContainer
+        Environment:
+        - Name: COMPOSE_PROJECT_NAME
+          Value: superset
+        - Name: CYPRESS_CONFIG
+          Value: "false"
+        - Name: DATABASE_DB
+          Value: superset
+        - Name: DATABASE_DIALECT
+          Value: postgresql
+        - Name: DATABASE_HOST
+          Value: db
+        - Name: DATABASE_PASSWORD
+          Value: superset
+        - Name: DATABASE_PORT
+          Value: "5432"
+        - Name: DATABASE_USER
+          Value: superset
+        - Name: FLASK_ENV
+          Value: development
+        - Name: POSTGRES_DB
+          Value: superset
+        - Name: POSTGRES_PASSWORD
+          Value: superset
+        - Name: POSTGRES_USER
+          Value: superset
+        - Name: PYTHONPATH
+          Value: /app/pythonpath:/app/docker/pythonpath_dev
+        - Name: REDIS_HOST
+          Value: redis
+        - Name: REDIS_PORT
+          Value: "6379"
+        - Name: SUPERSET_ENV
+          Value: development
+        - Name: SUPERSET_LOAD_EXAMPLES
+          Value: !Ref WithExample
+        - Name: SUPERSET_PORT
+          Value: "8088"
+        - Name: SUPERSET_USER
+          Value: !Ref UserName
+        - Name: SUPERSET_PASSWORD
+          Value: !Ref UserPassword
+        Essential: true
+        Image: public.ecr.aws/p9r6s5p7/superset:latest
+        LinuxParameters: {}
+        LogConfiguration:
+          LogDriver: awslogs
+          Options:
+            awslogs-group:
+              Ref: LogGroup
+            awslogs-region:
+              Ref: AWS::Region
+            awslogs-stream-prefix: supersetOnAWS
+        MountPoints:
+        - ContainerPath: /app/superset_home
+          SourceVolume: superset_home
+        Name: superset-worker-beat
+        User: root
+      Cpu: "4096"
+      ExecutionRoleArn:
+        Ref: SupersetworkerbeatTaskExecutionRole
+      Family: supersetOnAWS-superset-worker-beat
+      Memory: "16384"
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+      - FARGATE
+      TaskRoleArn:
+        Ref: SupersetworkerbeatTaskRole
+      Volumes:
+      - EFSVolumeConfiguration:
+          AuthorizationConfig:
+            AccessPointId:
+              Ref: SupersethomeAccessPoint
+            IAM: ENABLED
+          FilesystemId:
+            Ref: SupersethomeFilesystem
+          TransitEncryption: ENABLED
+        Name: superset_home
+    Type: AWS::ECS::TaskDefinition
+  SupersetworkerbeatTaskExecutionRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action:
+          - sts:AssumeRole
+          Condition: {}
+          Effect: Allow
+          Principal:
+            Service: ecs-tasks.amazonaws.com
+        Version: 2012-10-17
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+      - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+      Tags:
+      - Key: com.docker.compose.project
+        Value: supersetOnAWS
+      - Key: com.docker.compose.service
+        Value: superset-worker-beat
+    Type: AWS::IAM::Role
+  SupersetworkerbeatTaskRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action:
+          - sts:AssumeRole
+          Condition: {}
+          Effect: Allow
+          Principal:
+            Service: ecs-tasks.amazonaws.com
+        Version: 2012-10-17
+      Policies:
+      - PolicyDocument:
+          Statement:
+          - Action:
+            - elasticfilesystem:ClientMount
+            - elasticfilesystem:ClientWrite
+            - elasticfilesystem:ClientRootAccess
+            Condition:
+              StringEquals:
+                elasticfilesystem:AccessPointArn:
+                  Ref: SupersethomeAccessPoint
+            Effect: Allow
+            Principal: {}
+            Resource:
+            - Fn::GetAtt:
+              - SupersethomeFilesystem
+              - Arn
+          Version: 2012-10-17
+        PolicyName: SupersetworkerbeatSupersethomeVolumeMountPolicy
+      Tags:
+      - Key: com.docker.compose.project
+        Value: supersetOnAWS
+      - Key: com.docker.compose.service
+        Value: superset-worker-beat
+    Type: AWS::IAM::Role
+
+  ## superset console url
+Outputs:
+  SupersetConsole:
+    Description: SupersetConsole URL
+    Value: !Join [ ":", [ !GetAtt LoadBalancer.DNSName, 8088 ] ]
