@@ -1,6 +1,6 @@
 # Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
-Description: "(xx-xxxx) - Superset on AWS offer customer a reliable, scalable and open-sourced BI applcation with least effort. Version v1.0.0"
+Description: "(SO8018) - Superset on AWS offer customer a reliable, scalable and open-sourced BI applcation with least effort. Version v1.0.0"
 
 Parameters:
   UserName:
@@ -62,6 +62,22 @@ Parameters:
     Description: Please enter the IP range (CIDR notation) for the private subnet in the second Availability Zone
     AllowedPattern: "(?:^$|(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2}))"
     ConstraintDescription: "must be a valid IP CIDR range of the form x.x.x.x/x."
+  VpcID:
+    Type: AWS::EC2::VPC::Id
+    Description: VPC Id
+  PublicSubnet1ID:
+    Type: AWS::EC2::Subnet::Id
+    Description: Public Subnet Id for the first Availability Zone
+  PublicSubnet2ID:
+    Type: AWS::EC2::Subnet::Id
+    Description: Public Subnet Id for the second Availability Zone
+  PrivateSubnet1AID:
+    Type: AWS::EC2::Subnet::Id
+    Description: Private Subnet Id for the first Availability Zone
+  PrivateSubnet2AID:
+    Type: AWS::EC2::Subnet::Id
+    Description: Private Subnet Id for the second Availability Zone
+
 Metadata:
   AWS::CloudFormation::Interface:
     ParameterGroups:
@@ -81,6 +97,11 @@ Metadata:
           - PublicSubnet2CIDR
           - PrivateSubnet1CIDR
           - PrivateSubnet2CIDR
+          - VpcID
+          - PublicSubnet1ID
+          - PublicSubnet2ID
+          - PrivateSubnet1AID
+          - PrivateSubnet2AID
     ParameterLabels:
       UserName:
         default: "Initial Superset User Name"
@@ -102,13 +123,24 @@ Metadata:
         default: "Private Subnet for the first Availability Zone"
       PrivateSubnet2CIDR:
         default: "Private Subnet for the second Availability Zone"
+      VpcID:
+        default: "Vpc ID"
+      PublicSubnet1ID:
+        default: "Public Subnet Id for the first Availability Zone"
+      PublicSubnet2ID:
+        default: "Public Subnet Id for the second Availability Zone"
+      PrivateSubnet1AID:
+        default: "Private Subnet Id for the first Availability Zone"
+      PrivateSubnet2AID:
+        default: "Private Subnet Id for the second Availability Zone"
+
 Resources:
   ## Cloud Map
   CloudMap:
     Properties:
       Description: Service Map for Docker Compose project supersetOnAWS
       Name: supersetOnAWS.local
-      Vpc: !Ref Vpc
+      Vpc: !Ref VpcID
     Type: AWS::ServiceDiscovery::PrivateDnsNamespace
   Cluster:
     Properties:
@@ -117,174 +149,6 @@ Resources:
       - Key: com.docker.compose.project
         Value: supersetOnAWS
     Type: AWS::ECS::Cluster
-
-  ## VPC Network with NAT Gateway
-  Vpc:
-    Type: AWS::EC2::VPC
-    Properties:
-      CidrBlock: !Ref VpcCIDR
-      EnableDnsSupport: true
-      EnableDnsHostnames: true
-      Tags:
-        - Key: Name
-          Value: (xx-xxxx)
-
-  InternetGateway:
-    Type: AWS::EC2::InternetGateway
-    Properties:
-      Tags:
-        - Key: Name
-          Value: (xx-xxxx)
-
-  InternetGatewayAttachment:
-    Type: AWS::EC2::VPCGatewayAttachment
-    Properties:
-      InternetGatewayId: !Ref InternetGateway
-      VpcId: !Ref Vpc
-
-  PublicSubnet1:
-    Type: AWS::EC2::Subnet
-    Properties:
-      VpcId: !Ref Vpc
-      AvailabilityZone: !Select [ 0, !GetAZs '' ]
-      CidrBlock: !Ref PublicSubnet1CIDR
-      MapPublicIpOnLaunch: true
-      Tags:
-        - Key: Name
-          Value: (xx-xxxx) Public Subnet (AZ1)
-
-  PublicSubnet2:
-    Type: AWS::EC2::Subnet
-    Properties:
-      VpcId: !Ref Vpc
-      AvailabilityZone: !Select [ 1, !GetAZs  '' ]
-      CidrBlock: !Ref PublicSubnet2CIDR
-      MapPublicIpOnLaunch: true
-      Tags:
-        - Key: Name
-          Value: (xx-xxxx) Public Subnet (AZ2)
-
-  PrivateSubnet1:
-    Type: AWS::EC2::Subnet
-    Properties:
-      VpcId: !Ref Vpc
-      AvailabilityZone: !Select [ 0, !GetAZs  '' ]
-      CidrBlock: !Ref PrivateSubnet1CIDR
-      MapPublicIpOnLaunch: false
-      Tags:
-        - Key: Name
-          Value: (xx-xxxx) Private Subnet (AZ1)
-
-  PrivateSubnet2:
-    Type: AWS::EC2::Subnet
-    Properties:
-      VpcId: !Ref Vpc
-      AvailabilityZone: !Select [ 1, !GetAZs  '' ]
-      CidrBlock: !Ref PrivateSubnet2CIDR
-      MapPublicIpOnLaunch: false
-      Tags:
-        - Key: Name
-          Value: (xx-xxxx) Private Subnet (AZ2)
-
-  NatGateway1EIP:
-    Type: AWS::EC2::EIP
-    DependsOn: InternetGatewayAttachment
-    Properties:
-      Domain: vpc
-
-  NatGateway2EIP:
-    Type: AWS::EC2::EIP
-    DependsOn: InternetGatewayAttachment
-    Properties:
-      Domain: vpc
-
-  NatGateway1:
-    Type: AWS::EC2::NatGateway
-    Properties:
-      AllocationId: !GetAtt NatGateway1EIP.AllocationId
-      SubnetId: !Ref PublicSubnet1
-      Tags:
-        - Key: Name
-          Value: (xx-xxxx) Nat Gateway 1
-
-  NatGateway2:
-    Type: AWS::EC2::NatGateway
-    Properties:
-      AllocationId: !GetAtt NatGateway2EIP.AllocationId
-      SubnetId: !Ref PublicSubnet2
-      Tags:
-        - Key: Name
-          Value: (xx-xxxx) Nat Gateway 2
-
-  PublicRouteTable:
-    Type: AWS::EC2::RouteTable
-    Properties:
-      VpcId: !Ref Vpc
-      Tags:
-        - Key: Name
-          Value: (xx-xxxx) Public Routes
-
-  DefaultPublicRoute:
-    Type: AWS::EC2::Route
-    DependsOn: InternetGatewayAttachment
-    Properties:
-      RouteTableId: !Ref PublicRouteTable
-      DestinationCidrBlock: 0.0.0.0/0
-      GatewayId: !Ref InternetGateway
-
-  PublicSubnet1RouteTableAssociation:
-    Type: AWS::EC2::SubnetRouteTableAssociation
-    Properties:
-      RouteTableId: !Ref PublicRouteTable
-      SubnetId: !Ref PublicSubnet1
-
-  PublicSubnet2RouteTableAssociation:
-    Type: AWS::EC2::SubnetRouteTableAssociation
-    Properties:
-      RouteTableId: !Ref PublicRouteTable
-      SubnetId: !Ref PublicSubnet2
-
-  PrivateRouteTable1:
-    Type: AWS::EC2::RouteTable
-    Properties:
-      VpcId: !Ref Vpc
-      Tags:
-        - Key: Name
-          Value: (xx-xxxx) Private Routes (AZ1)
-
-  DefaultPrivateRoute1:
-    Type: AWS::EC2::Route
-    Properties:
-      RouteTableId: !Ref PrivateRouteTable1
-      DestinationCidrBlock: 0.0.0.0/0
-      NatGatewayId: !Ref NatGateway1
-
-  PrivateSubnet1RouteTableAssociation:
-    Type: AWS::EC2::SubnetRouteTableAssociation
-    Properties:
-      RouteTableId: !Ref PrivateRouteTable1
-      SubnetId: !Ref PrivateSubnet1
-
-  PrivateRouteTable2:
-    Type: AWS::EC2::RouteTable
-    Properties:
-      VpcId: !Ref Vpc
-      Tags:
-        - Key: Name
-          Value: (xx-xxxx) Private Routes (AZ2)
-
-  DefaultPrivateRoute2:
-    Type: AWS::EC2::Route
-    Properties:
-      RouteTableId: !Ref PrivateRouteTable2
-      DestinationCidrBlock: 0.0.0.0/0
-      NatGatewayId: !Ref NatGateway2
-
-  PrivateSubnet2RouteTableAssociation:
-    Type: AWS::EC2::SubnetRouteTableAssociation
-    Properties:
-      RouteTableId: !Ref PrivateRouteTable2
-      SubnetId: !Ref PrivateSubnet2
 
   ## Security Group
   Default5432Ingress:
@@ -325,7 +189,7 @@ Resources:
         Value: supersetOnAWS
       - Key: com.docker.compose.network
         Value: supersetOnAWS_default
-      VpcId: !Ref Vpc
+      VpcId: !Ref VpcID
     Type: AWS::EC2::SecurityGroup
   DefaultNetworkIngress:
     Properties:
@@ -345,8 +209,8 @@ Resources:
         Value: "true"
       Scheme: internet-facing
       Subnets:
-      - !Ref PublicSubnet1
-      - !Ref PublicSubnet2
+      - !Ref PublicSubnet1ID
+      - !Ref PublicSubnet2ID
       Tags:
       - Key: com.docker.compose.project
         Value: supersetOnAWS
@@ -382,8 +246,8 @@ Resources:
           SecurityGroups:
           - Ref: DefaultNetwork
           Subnets:
-          - !Ref PrivateSubnet1
-          - !Ref PrivateSubnet2
+          - !Ref PrivateSubnet1AID
+          - !Ref PrivateSubnet2AID
       PlatformVersion: 1.4.0
       PropagateTags: SERVICE
       SchedulingStrategy: REPLICA
@@ -603,7 +467,8 @@ Resources:
         Ref: DbhomeFilesystem
       SecurityGroups:
       - Ref: DefaultNetwork
-      SubnetId: !Ref PrivateSubnet1
+      SubnetId: !Ref PrivateSubnet1AID
+      # - !ImportValue 'Fn::Sub': '${AWS::StackName}-PrivateSubnet21ID'
     Type: AWS::EFS::MountTarget
   DbhomeNFSMountTargetOnSubnetB:
     Properties:
@@ -611,7 +476,8 @@ Resources:
         Ref: DbhomeFilesystem
       SecurityGroups:
       - Ref: DefaultNetwork
-      SubnetId: !Ref PrivateSubnet2
+      SubnetId: !Ref PrivateSubnet2AID
+      # - !ImportValue 'Fn::Sub': '${AWS::StackName}-PrivateSubnet2AID'
     Type: AWS::EFS::MountTarget
 
   ## ECS Service - Superset redis
@@ -645,7 +511,8 @@ Resources:
         Ref: RedisFilesystem
       SecurityGroups:
       - Ref: DefaultNetwork
-      SubnetId: !Ref PrivateSubnet1
+      SubnetId: !Ref PrivateSubnet1AID
+      # - !ImportValue 'Fn::Sub': '${AWS::StackName}-PrivateSubnet1AID'
     Type: AWS::EFS::MountTarget
   RedisNFSMountTargetOnSubnetB:
     Properties:
@@ -653,7 +520,8 @@ Resources:
         Ref: RedisFilesystem
       SecurityGroups:
       - Ref: DefaultNetwork
-      SubnetId: !Ref PrivateSubnet2
+      SubnetId: !Ref PrivateSubnet2AID
+      # - !ImportValue 'Fn::Sub': '${AWS::StackName}-PrivateSubnet2AID'
     Type: AWS::EFS::MountTarget
   RedisService:
     DependsOn:
@@ -677,8 +545,8 @@ Resources:
           SecurityGroups:
           - Ref: DefaultNetwork
           Subnets:
-          - !Ref PrivateSubnet1
-          - !Ref PrivateSubnet2
+          - !Ref PrivateSubnet1AID
+          - !Ref PrivateSubnet2AID
       PlatformVersion: 1.4.0
       PropagateTags: SERVICE
       SchedulingStrategy: REPLICA
@@ -825,7 +693,7 @@ Resources:
       - Key: com.docker.compose.service
         Value: redis
     Type: AWS::IAM::Role
-  
+
   ## ECS Service - Superset app
   SupersetService:
     DependsOn:
@@ -857,8 +725,8 @@ Resources:
           SecurityGroups:
           - Ref: DefaultNetwork
           Subnets:
-          - !Ref PrivateSubnet1
-          - !Ref PrivateSubnet2
+          - !Ref PrivateSubnet1AID
+          - !Ref PrivateSubnet2AID
       PlatformVersion: 1.4.0
       PropagateTags: SERVICE
       SchedulingStrategy: REPLICA
@@ -910,7 +778,7 @@ Resources:
       - Key: com.docker.compose.project
         Value: supersetOnAWS
       TargetType: ip
-      VpcId: !Ref Vpc
+      VpcId: !Ref VpcID
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
   SupersetTaskDefinition:
     Properties:
@@ -1107,7 +975,8 @@ Resources:
         Ref: SupersethomeFilesystem
       SecurityGroups:
       - Ref: DefaultNetwork
-      SubnetId: !Ref PrivateSubnet1
+      SubnetId: !Ref PrivateSubnet1AID
+      # - !ImportValue 'Fn::Sub': '${AWS::StackName}-PrivateSubnet1AID'
     Type: AWS::EFS::MountTarget
   SupersethomeNFSMountTargetOnSubnetB:
     Properties:
@@ -1115,7 +984,8 @@ Resources:
         Ref: SupersethomeFilesystem
       SecurityGroups:
       - Ref: DefaultNetwork
-      SubnetId: !Ref PrivateSubnet2
+      SubnetId: !Ref PrivateSubnet2AID
+      # - !ImportValue 'Fn::Sub': '${AWS::StackName}-PrivateSubnet2AID'
     Type: AWS::EFS::MountTarget
 
   ## ECS Service - Superset init
@@ -1144,8 +1014,8 @@ Resources:
           SecurityGroups:
           - Ref: DefaultNetwork
           Subnets:
-          - !Ref PrivateSubnet1
-          - !Ref PrivateSubnet2
+          - !Ref PrivateSubnet1AID
+          - !Ref PrivateSubnet2AID
       PlatformVersion: 1.4.0
       PropagateTags: SERVICE
       SchedulingStrategy: REPLICA
@@ -1382,8 +1252,8 @@ Resources:
           SecurityGroups:
           - Ref: DefaultNetwork
           Subnets:
-          - !Ref PrivateSubnet1
-          - !Ref PrivateSubnet2
+          - !Ref PrivateSubnet1AID
+          - !Ref PrivateSubnet2AID
       PlatformVersion: 1.4.0
       PropagateTags: SERVICE
       SchedulingStrategy: REPLICA
@@ -1595,8 +1465,8 @@ Resources:
           SecurityGroups:
           - Ref: DefaultNetwork
           Subnets:
-          - !Ref PrivateSubnet1
-          - !Ref PrivateSubnet2
+          - !Ref PrivateSubnet1AID
+          - !Ref PrivateSubnet2AID
       PlatformVersion: 1.4.0
       PropagateTags: SERVICE
       SchedulingStrategy: REPLICA
@@ -1810,8 +1680,8 @@ Resources:
           SecurityGroups:
           - Ref: DefaultNetwork
           Subnets:
-          - !Ref PrivateSubnet1
-          - !Ref PrivateSubnet2
+          - !Ref PrivateSubnet1AID
+          - !Ref PrivateSubnet2AID
       PlatformVersion: 1.4.0
       PropagateTags: SERVICE
       SchedulingStrategy: REPLICA

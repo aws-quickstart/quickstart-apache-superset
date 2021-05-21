@@ -2,4 +2,14 @@
 // Briefly describe the software. Use consistent and clear branding. 
 // Include the benefits of using the software on AWS, and provide details on usage scenarios.
 
-<Describe how the software works on AWS.>
+Inbound client traffic is redirect through Application Load Balancer (ALB) to 
+Elastic Container Service (ECS) cluster, which is the core service to run all Superset modules, include core business framework, cache, database and message queue etc. Each module running as single ECS service seperately and will be re-launch if any of your tasks should fail or stop for any reason. All ECS services discovery are done by Cloud Map through internal private DNS name, and outbound traffic like software update, data source connect are provided by network address translation (NAT) gateways. All persistent data include queried data, system metadata are store into Elastic File System in consideration of securty and cost efficiency.
+
+In summary, compared to community Apache version, Superset running on Amazon Cloud provide:
+
+* Core modules (Superset, Cache, Database) highly available.
+* Business data (metadata, query data, interactive data) persistence.
+* Platform elasticity and scalability, users don't need to maintain underlying infrastructure and associate resource scheduling.
+* Pre-installed SQL, PostgreSQL, Redshift, Athena, Clickhouse data source driver, fast connection to display existing data.
+* Pre-installed timing prediction algorithm, based on imported data to realize future trend prediction.
+* Visual Kanban for real-time service metrics and comprehensive application monitoring.

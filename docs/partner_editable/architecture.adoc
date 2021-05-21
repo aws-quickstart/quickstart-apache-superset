@@ -15,15 +15,10 @@ As shown in <<architecture1>>, the Quick Start sets up the following:
 * A highly available architecture that spans two Availability Zones.*
 * A VPC configured with public and private subnets, according to AWS
 best practices, to provide you with your own virtual network on AWS.*
-* In the public subnets:
-** Managed network address translation (NAT) gateways to allow outbound
+** In the public subnets, managed internet gateway forward inbound traffic to Application Load Balancer (ALB), managed network address translation (NAT) gateways provide outbound
 internet access for resources in the private subnets.*
-** A Linux bastion host in an Auto Scaling group to allow inbound Secure
-Shell (SSH) access to EC2 instances in public and private subnets.*
-* In the private subnets:
-** <item>.
-** <item>.
+* A Elastic Container Service (ECS) cluster provide all Superset functions include core system, cache, database, message queue and frontend.
+* A Elastic File System provide meta data, query cache data persistency and sharing between service modules.
 // Add bullet points for any additional components that are included in the deployment. Make sure that the additional components are also represented in the architecture diagram. End each bullet with a period.
-* <describe any additional components>.
 
 [.small]#* The template that deploys the Quick Start into an existing VPC skips the components marked by asterisks and prompts you for your existing VPC configuration.#
