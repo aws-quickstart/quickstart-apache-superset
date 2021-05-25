@@ -106,7 +106,10 @@ Resources:
   Vpc:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
-      TemplateURL: https://superset-template.s3.cn-north-1.amazonaws.com.cn/aws-vpc.template
+      TemplateURL: !Sub
+        - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}submodules/quickstart-aws-vpc/templates/aws-vpc.template.yaml'
+        - S3Region: !If [ UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion ]
+          S3Bucket: !If [ UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName ]
       Parameters:
         AvailabilityZones: !Join
           - ','
@@ -122,7 +125,7 @@ Resources:
     DependsOn: Vpc
     Type: 'AWS::CloudFormation::Stack'
     Properties:
-      TemplateURL: https://superset-template.s3.cn-north-1.amazonaws.com.cn/superset-on-aws-new-vpc.template
+        https://superset-template.s3.cn-north-1.amazonaws.com.cn/superset-on-aws-new-vpc.template
       Parameters:
         UserName: !Ref 'UserName'
         UserPassword: !Ref 'UserPassword'
