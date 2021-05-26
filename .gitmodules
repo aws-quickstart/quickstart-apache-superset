@@ -1,6 +1,7 @@
 [submodule "docs/boilerplate"]
 	path = docs/boilerplate
 	url = https://github.com/aws-quickstart/quickstart-documentation-base-common.git
-[submodule "submodules"]
-	path = submodules
-	url = https://github.com/aws-quickstart/quickstart-aws-vpc.git
+
+[submodule "submodules/quickstart-aws-vpc"]
+	path = submodules/quickstart-aws-vpc
+	url = https://github.com/aws-quickstart/quickstart-aws-vpc
