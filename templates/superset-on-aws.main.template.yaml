@@ -149,7 +149,7 @@ Resources:
         VPCCIDR: !Ref VpcCIDR
 
   Superset:
-    DependsOn: Vpc
+    # DependsOn: Vpc
     Type: 'AWS::CloudFormation::Stack'
     Properties:
       TemplateURL: !Sub

@@ -361,8 +361,7 @@ Resources:
           HostPort: 5432
           Protocol: tcp
       Cpu: "256"
-      ExecutionRoleArn:
-        Ref: DbTaskExecutionRole
+      ExecutionRoleArn: !GetAtt DbTaskExecutionRole.Arn
       Family: supersetOnAWS-db
       Memory: "512"
       NetworkMode: awsvpc
@@ -424,7 +423,7 @@ Resources:
                 elasticfilesystem:AccessPointArn:
                   Ref: DbhomeAccessPoint
             Effect: Allow
-            Principal: {}
+            # Principal: {}
             Resource:
             - Fn::GetAtt:
               - DbhomeFilesystem
@@ -617,8 +616,7 @@ Resources:
           HostPort: 6379
           Protocol: tcp
       Cpu: "256"
-      ExecutionRoleArn:
-        Ref: RedisTaskExecutionRole
+      ExecutionRoleArn: !GetAtt RedisTaskExecutionRole.Arn
       Family: supersetOnAWS-redis
       Memory: "512"
       NetworkMode: awsvpc
@@ -680,7 +678,7 @@ Resources:
                 elasticfilesystem:AccessPointArn:
                   Ref: RedisAccessPoint
             Effect: Allow
-            Principal: {}
+            # Principal: {}
             Resource:
             - Fn::GetAtt:
               - RedisFilesystem
@@ -866,8 +864,7 @@ Resources:
           Protocol: tcp
         User: root
       Cpu: "4096"
-      ExecutionRoleArn:
-        Ref: SupersetTaskExecutionRole
+      ExecutionRoleArn: !GetAtt SupersetTaskExecutionRole.Arn
       Family: supersetOnAWS-superset
       Memory: "16384"
       NetworkMode: awsvpc
@@ -932,7 +929,7 @@ Resources:
                 elasticfilesystem:AccessPointArn:
                   Ref: SupersethomeAccessPoint
             Effect: Allow
-            Principal: {}
+            # Principal: {}
             Resource:
             - Fn::GetAtt:
               - SupersethomeFilesystem
@@ -1132,7 +1129,7 @@ Resources:
         - --service
         - supersetInitService
         - --desired-count
-        - 0
+        - "0"
         DependsOn:
         - Condition: SUCCESS
           ContainerName: superset-init
@@ -1148,8 +1145,7 @@ Resources:
             awslogs-stream-prefix: supersetOnAWS
         Name: superset-init-cleanup
       Cpu: "512"
-      ExecutionRoleArn:
-        Ref: SupersetinitTaskExecutionRole
+      ExecutionRoleArn: !GetAtt SupersetinitTaskExecutionRole.Arn
       Family: supersetOnAWS-superset-init
       Memory: "1024"
       NetworkMode: awsvpc
@@ -1213,7 +1209,7 @@ Resources:
                 elasticfilesystem:AccessPointArn:
                   Ref: SupersethomeAccessPoint
             Effect: Allow
-            Principal: {}
+            # Principal: {}
             Resource:
             - Fn::GetAtt:
               - SupersethomeFilesystem
@@ -1363,8 +1359,7 @@ Resources:
           SourceVolume: superset_home
         Name: superset-node
       Cpu: "4096"
-      ExecutionRoleArn:
-        Ref: SupersetnodeTaskExecutionRole
+      ExecutionRoleArn: !GetAtt SupersetnodeTaskExecutionRole.Arn
       Family: supersetOnAWS-superset-node
       Memory: "8192"
       NetworkMode: awsvpc
@@ -1426,7 +1421,7 @@ Resources:
                 elasticfilesystem:AccessPointArn:
                   Ref: SupersethomeAccessPoint
             Effect: Allow
-            Principal: {}
+            # Principal: {}
             Resource:
             - Fn::GetAtt:
               - SupersethomeFilesystem
@@ -1578,8 +1573,7 @@ Resources:
         Name: superset-worker
         User: root
       Cpu: "4096"
-      ExecutionRoleArn:
-        Ref: SupersetworkerTaskExecutionRole
+      ExecutionRoleArn: !GetAtt SupersetworkerTaskExecutionRole.Arn
       Family: supersetOnAWS-superset-worker
       Memory: "16384"
       NetworkMode: awsvpc
@@ -1641,7 +1635,7 @@ Resources:
                 elasticfilesystem:AccessPointArn:
                   Ref: SupersethomeAccessPoint
             Effect: Allow
-            Principal: {}
+            # Principal: {}
             Resource:
             - Fn::GetAtt:
               - SupersethomeFilesystem
@@ -1793,8 +1787,7 @@ Resources:
         Name: superset-worker-beat
         User: root
       Cpu: "4096"
-      ExecutionRoleArn:
-        Ref: SupersetworkerbeatTaskExecutionRole
+      ExecutionRoleArn: !GetAtt SupersetworkerbeatTaskExecutionRole.Arn
       Family: supersetOnAWS-superset-worker-beat
       Memory: "16384"
       NetworkMode: awsvpc
@@ -1856,7 +1849,7 @@ Resources:
                 elasticfilesystem:AccessPointArn:
                   Ref: SupersethomeAccessPoint
             Effect: Allow
-            Principal: {}
+            # Principal: {}
             Resource:
             - Fn::GetAtt:
               - SupersethomeFilesystem
@@ -1874,4 +1867,7 @@ Resources:
 Outputs:
   SupersetConsole:
     Description: SupersetConsole URL
-    Value: !Join [ ":", [ !GetAtt LoadBalancer.DNSName, 8088 ] ]
+    Value:
+      Fn::Sub:
+        - ${url}:${port}
+        - {url: !GetAtt LoadBalancer.DNSName, port: '8088'}
