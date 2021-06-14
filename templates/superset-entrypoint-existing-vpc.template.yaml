@@ -1,47 +1,10 @@
 # Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
-Description: "(SO8018) - Superset on AWS offer customer a reliable, scalable and open-sourced BI applcation with least effort. Version v1.0.0"
-
-Parameters:
-  UserName:
-    Type: String
-    Description: Superset user name.
-  UserPassword:
-    Type: String
-    Description: Superset user password. Strict password policy is recommended.
-    NoEcho: True
-  WithExample:
-    Type: String
-    Default: "yes"
-    Description: >-
-      Enables or disables pre-populating official dashboard example.
-      no = DON'T pre-populate official dashboard example;
-      yes = pre-populate official dashboard example
-  InstallProphet:
-    Type: String
-    Default: "no"
-    Description: >-
-      Enables or disables Prophet library installation for Forecasting Analytics.
-      no = DON'T install Prophet for Forecasting Analytics;
-      yes = install Prophet to enable Forecasting Analytics
-  PublicSubnet1:
-    Type: AWS::EC2::Subnet::Id
-    Description: Public subnet in the first Availability Zone
-  PublicSubnet2:
-    Type: AWS::EC2::Subnet::Id
-    Description: Public subnet in the second Availability Zone
-  PrivateSubnet1:
-    Type: AWS::EC2::Subnet::Id
-    Description: Private subnet in the first Availability Zone
-  PrivateSubnet2:
-    Type: AWS::EC2::Subnet::Id
-    Description: Private subnet in the second Availability Zone
-
-  Vpc:
-    Type: AWS::EC2::VPC::Id
-    Description: VPC ID to create ECS cluster
-
+Description: "Apache Superset on AWS offers the customer a reliable, scalable and open-sourced BI application with least effort. Launches into an existing VPC. Version v1.0.0" (qs-1s0fbq688)(SO8018)
 Metadata:
+  QuickStartDocumentation:
+    EntrypointName: "Parameters for deploying into an Existing VPC"
+    Order: "2"
   AWS::CloudFormation::Interface:
     ParameterGroups:
       - Label:
@@ -78,9 +41,44 @@ Metadata:
         default: "Private Subnet for the second Availability Zone"
       Vpc:
         default: "VPC ID"
-
+Parameters:
+  UserName:
+    Type: String
+    Description: Superset user name.
+  UserPassword:
+    Type: String
+    Description: Superset user password. Strict password policy is recommended.
+    NoEcho: True
+  WithExample:
+    Type: String
+    Default: "yes"
+    Description: >-
+      Enables or disables pre-populating official dashboard example.
+      no = DON'T pre-populate official dashboard example;
+      yes = pre-populate official dashboard example
+  InstallProphet:
+    Type: String
+    Default: "no"
+    Description: >-
+      Enables or disables Prophet library installation for Forecasting Analytics.
+      no = DON'T install Prophet for Forecasting Analytics;
+      yes = install Prophet to enable Forecasting Analytics
+  PublicSubnet1:
+    Type: AWS::EC2::Subnet::Id
+    Description: Public subnet in the first Availability Zone
+  PublicSubnet2:
+    Type: AWS::EC2::Subnet::Id
+    Description: Public subnet in the second Availability Zone
+  PrivateSubnet1:
+    Type: AWS::EC2::Subnet::Id
+    Description: Private subnet in the first Availability Zone
+  PrivateSubnet2:
+    Type: AWS::EC2::Subnet::Id
+    Description: Private subnet in the second Availability Zone
+  Vpc:
+    Type: AWS::EC2::VPC::Id
+    Description: VPC ID to create ECS cluster
 Resources:
-  ## Cloud Map
   CloudMap:
     Properties:
       Description: Service Map for Docker Compose project supersetOnAWSExistedVPC
@@ -94,8 +92,6 @@ Resources:
       - Key: com.docker.compose.project
         Value: supersetOnAWSExistedVPC
     Type: AWS::ECS::Cluster
-
-  ## ECS Service - Database
   DbService:
     DependsOn:
     - DbhomeNFSMountTargetOnSubnetB
@@ -295,7 +291,6 @@ Resources:
                 elasticfilesystem:AccessPointArn:
                   Ref: DbhomeAccessPoint
             Effect: Allow
-            # Principal: {}
             Resource:
             - Fn::GetAtt:
               - DbhomeFilesystem
@@ -348,8 +343,6 @@ Resources:
       - Ref: DefaultNetwork
       SubnetId: !Ref PrivateSubnet2
     Type: AWS::EFS::MountTarget
-
-  ## Security Group
   Default5432Ingress:
     Properties:
       CidrIp: 0.0.0.0/0
@@ -399,8 +392,6 @@ Resources:
       SourceSecurityGroupId:
         Ref: DefaultNetwork
     Type: AWS::EC2::SecurityGroupIngress
-
-  ## Application Load Balancer
   LoadBalancer:
     Properties:
       LoadBalancerAttributes:
@@ -415,14 +406,10 @@ Resources:
         Value: supersetOnAWSExistedVPC
       Type: network
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
-
-  ## CloudWatch Log
   LogGroup:
     Properties:
       LogGroupName: /docker-compose/supersetOnAWS1207
     Type: AWS::Logs::LogGroup
-
-  ## ECS Service - Superset redis
   RedisAccessPoint:
     Properties:
       AccessPointTags:
@@ -619,7 +606,6 @@ Resources:
                 elasticfilesystem:AccessPointArn:
                   Ref: RedisAccessPoint
             Effect: Allow
-            # Principal: {}
             Resource:
             - Fn::GetAtt:
               - RedisFilesystem
@@ -632,8 +618,6 @@ Resources:
       - Key: com.docker.compose.service
         Value: redis
     Type: AWS::IAM::Role
-  
-  ## ECS Service - Superset app
   SupersetService:
     DependsOn:
     - SupersetTCP8088Listener
@@ -870,7 +854,6 @@ Resources:
                 elasticfilesystem:AccessPointArn:
                   Ref: SupersethomeAccessPoint
             Effect: Allow
-            # Principal: {}
             Resource:
             - Fn::GetAtt:
               - SupersethomeFilesystem
@@ -923,8 +906,6 @@ Resources:
       - Ref: DefaultNetwork
       SubnetId: !Ref PrivateSubnet2
     Type: AWS::EFS::MountTarget
-
-  ## ECS Service - Superset init
   SupersetinitService:
     DependsOn:
     - DbService
@@ -1148,7 +1129,6 @@ Resources:
                 elasticfilesystem:AccessPointArn:
                   Ref: SupersethomeAccessPoint
             Effect: Allow
-            # Principal: {}
             Resource:
             - Fn::GetAtt:
               - SupersethomeFilesystem
@@ -1161,8 +1141,6 @@ Resources:
       - Key: com.docker.compose.service
         Value: superset-init
     Type: AWS::IAM::Role
-
-  ## ECS Service - Superset node
   SupersetnodeService:
     DependsOn:
     - DbService
@@ -1360,7 +1338,6 @@ Resources:
                 elasticfilesystem:AccessPointArn:
                   Ref: SupersethomeAccessPoint
             Effect: Allow
-            # Principal: {}
             Resource:
             - Fn::GetAtt:
               - SupersethomeFilesystem
@@ -1373,8 +1350,6 @@ Resources:
       - Key: com.docker.compose.service
         Value: superset-node
     Type: AWS::IAM::Role
-
-  ## ECS Service - Superset celery worker
   SupersetworkerService:
     DependsOn:
     - DbService
@@ -1574,7 +1549,6 @@ Resources:
                 elasticfilesystem:AccessPointArn:
                   Ref: SupersethomeAccessPoint
             Effect: Allow
-            # Principal: {}
             Resource:
             - Fn::GetAtt:
               - SupersethomeFilesystem
@@ -1587,8 +1561,6 @@ Resources:
       - Key: com.docker.compose.service
         Value: superset-worker
     Type: AWS::IAM::Role
-
-  ## ECS Service - Superset celery beat
   SupersetworkerbeatService:
     DependsOn:
     - DbService
@@ -1788,7 +1760,6 @@ Resources:
                 elasticfilesystem:AccessPointArn:
                   Ref: SupersethomeAccessPoint
             Effect: Allow
-            # Principal: {}
             Resource:
             - Fn::GetAtt:
               - SupersethomeFilesystem
@@ -1801,8 +1772,6 @@ Resources:
       - Key: com.docker.compose.service
         Value: superset-worker-beat
     Type: AWS::IAM::Role
-
-## superset console url
 Outputs:
   SupersetConsole:
     Description: SupersetConsole URL

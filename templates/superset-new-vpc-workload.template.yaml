@@ -1,7 +1,64 @@
 # Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
-Description: "(SO8018) - Superset on AWS offer customer a reliable, scalable and open-sourced BI applcation with least effort. Version v1.0.0"
-
+Description: "Workload for Apache SuperSet into New VPC. Version v1.0.0"(qs-1s0fbq68g)(SO8018)
+Metadata:
+  QuickStartDocumentation:
+    EntrypointName: "Parameters for deploying into an Existing VPC"
+    Order: "3"
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: "Account Configuration, set account info"
+        Parameters:
+          - UserName
+          - UserPassword
+          - WithExample
+          - InstallProphet
+      - Label:
+          default: "Network Configuration, create new VPC for AWS ECS Fargate"
+        Parameters:
+          - AvailabilityZones
+          - VpcCIDR
+          - PublicSubnet1CIDR
+          - PublicSubnet2CIDR
+          - PrivateSubnet1CIDR
+          - PrivateSubnet2CIDR
+          - VpcID
+          - PublicSubnet1ID
+          - PublicSubnet2ID
+          - PrivateSubnet1AID
+          - PrivateSubnet2AID
+    ParameterLabels:
+      UserName:
+        default: "Initial Superset User Name"
+      UserPassword:
+        default: "Initial Superset User Password"
+      WithExample:
+        default: "Pre-populate example dashboard"
+      InstallProphet:
+        default: "Install Prophet library"
+      AvailabilityZones:
+        default: "Availability Zones"
+      VpcCIDR:
+        default: "AWS ECS Fargate VPC CIDR Block"
+      PublicSubnet1CIDR:
+        default: "Public Subnet for the first Availability Zone"
+      PublicSubnet2CIDR:
+        default: "Public Subnet for the second Availability Zone"
+      PrivateSubnet1CIDR:
+        default: "Private Subnet for the first Availability Zone"
+      PrivateSubnet2CIDR:
+        default: "Private Subnet for the second Availability Zone"
+      VpcID:
+        default: "Vpc ID"
+      PublicSubnet1ID:
+        default: "Public Subnet Id for the first Availability Zone"
+      PublicSubnet2ID:
+        default: "Public Subnet Id for the second Availability Zone"
+      PrivateSubnet1AID:
+        default: "Private Subnet Id for the first Availability Zone"
+      PrivateSubnet2AID:
+        default: "Private Subnet Id for the second Availability Zone"
 Parameters:
   UserName:
     Type: String
@@ -77,65 +134,7 @@ Parameters:
   PrivateSubnet2AID:
     Type: AWS::EC2::Subnet::Id
     Description: Private Subnet Id for the second Availability Zone
-
-Metadata:
-  AWS::CloudFormation::Interface:
-    ParameterGroups:
-      - Label:
-          default: "Account Configuration, set account info"
-        Parameters:
-          - UserName
-          - UserPassword
-          - WithExample
-          - InstallProphet
-      - Label:
-          default: "Network Configuration, create new VPC for AWS ECS Fargate"
-        Parameters:
-          - AvailabilityZones
-          - VpcCIDR
-          - PublicSubnet1CIDR
-          - PublicSubnet2CIDR
-          - PrivateSubnet1CIDR
-          - PrivateSubnet2CIDR
-          - VpcID
-          - PublicSubnet1ID
-          - PublicSubnet2ID
-          - PrivateSubnet1AID
-          - PrivateSubnet2AID
-    ParameterLabels:
-      UserName:
-        default: "Initial Superset User Name"
-      UserPassword:
-        default: "Initial Superset User Password"
-      WithExample:
-        default: "Pre-populate example dashboard"
-      InstallProphet:
-        default: "Install Prophet library"
-      AvailabilityZones:
-        default: "Availability Zones"
-      VpcCIDR:
-        default: "AWS ECS Fargate VPC CIDR Block"
-      PublicSubnet1CIDR:
-        default: "Public Subnet for the first Availability Zone"
-      PublicSubnet2CIDR:
-        default: "Public Subnet for the second Availability Zone"
-      PrivateSubnet1CIDR:
-        default: "Private Subnet for the first Availability Zone"
-      PrivateSubnet2CIDR:
-        default: "Private Subnet for the second Availability Zone"
-      VpcID:
-        default: "Vpc ID"
-      PublicSubnet1ID:
-        default: "Public Subnet Id for the first Availability Zone"
-      PublicSubnet2ID:
-        default: "Public Subnet Id for the second Availability Zone"
-      PrivateSubnet1AID:
-        default: "Private Subnet Id for the first Availability Zone"
-      PrivateSubnet2AID:
-        default: "Private Subnet Id for the second Availability Zone"
-
 Resources:
-  ## Cloud Map
   CloudMap:
     Properties:
       Description: Service Map for Docker Compose project supersetOnAWS
@@ -149,8 +148,6 @@ Resources:
       - Key: com.docker.compose.project
         Value: supersetOnAWS
     Type: AWS::ECS::Cluster
-
-  ## Security Group
   Default5432Ingress:
     Properties:
       CidrIp: 0.0.0.0/0
@@ -200,8 +197,6 @@ Resources:
       SourceSecurityGroupId:
         Ref: DefaultNetwork
     Type: AWS::EC2::SecurityGroupIngress
-
-  ## Application Load Balancer
   LoadBalancer:
     Properties:
       LoadBalancerAttributes:
@@ -216,14 +211,10 @@ Resources:
         Value: supersetOnAWS
       Type: network
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
-
-  ## CloudWatch Log
   LogGroup:
     Properties:
       LogGroupName: /docker-compose/supersetOnAWS1983
     Type: AWS::Logs::LogGroup
-
-  ## ECS Service - Database
   DbService:
     DependsOn:
     - DbhomeNFSMountTargetOnSubnetB
@@ -467,7 +458,6 @@ Resources:
       SecurityGroups:
       - Ref: DefaultNetwork
       SubnetId: !Ref PrivateSubnet1AID
-      # - !ImportValue 'Fn::Sub': '${AWS::StackName}-PrivateSubnet21ID'
     Type: AWS::EFS::MountTarget
   DbhomeNFSMountTargetOnSubnetB:
     Properties:
@@ -476,10 +466,7 @@ Resources:
       SecurityGroups:
       - Ref: DefaultNetwork
       SubnetId: !Ref PrivateSubnet2AID
-      # - !ImportValue 'Fn::Sub': '${AWS::StackName}-PrivateSubnet2AID'
     Type: AWS::EFS::MountTarget
-
-  ## ECS Service - Superset redis
   RedisAccessPoint:
     Properties:
       AccessPointTags:
@@ -511,7 +498,6 @@ Resources:
       SecurityGroups:
       - Ref: DefaultNetwork
       SubnetId: !Ref PrivateSubnet1AID
-      # - !ImportValue 'Fn::Sub': '${AWS::StackName}-PrivateSubnet1AID'
     Type: AWS::EFS::MountTarget
   RedisNFSMountTargetOnSubnetB:
     Properties:
@@ -520,7 +506,6 @@ Resources:
       SecurityGroups:
       - Ref: DefaultNetwork
       SubnetId: !Ref PrivateSubnet2AID
-      # - !ImportValue 'Fn::Sub': '${AWS::StackName}-PrivateSubnet2AID'
     Type: AWS::EFS::MountTarget
   RedisService:
     DependsOn:
@@ -691,8 +676,6 @@ Resources:
       - Key: com.docker.compose.service
         Value: redis
     Type: AWS::IAM::Role
-
-  ## ECS Service - Superset app
   SupersetService:
     DependsOn:
     - SupersetTCP8088Listener
@@ -929,7 +912,6 @@ Resources:
                 elasticfilesystem:AccessPointArn:
                   Ref: SupersethomeAccessPoint
             Effect: Allow
-            # Principal: {}
             Resource:
             - Fn::GetAtt:
               - SupersethomeFilesystem
@@ -973,7 +955,6 @@ Resources:
       SecurityGroups:
       - Ref: DefaultNetwork
       SubnetId: !Ref PrivateSubnet1AID
-      # - !ImportValue 'Fn::Sub': '${AWS::StackName}-PrivateSubnet1AID'
     Type: AWS::EFS::MountTarget
   SupersethomeNFSMountTargetOnSubnetB:
     Properties:
@@ -982,10 +963,7 @@ Resources:
       SecurityGroups:
       - Ref: DefaultNetwork
       SubnetId: !Ref PrivateSubnet2AID
-      # - !ImportValue 'Fn::Sub': '${AWS::StackName}-PrivateSubnet2AID'
     Type: AWS::EFS::MountTarget
-
-  ## ECS Service - Superset init
   SupersetinitService:
     DependsOn:
     - DbService
@@ -1209,7 +1187,6 @@ Resources:
                 elasticfilesystem:AccessPointArn:
                   Ref: SupersethomeAccessPoint
             Effect: Allow
-            # Principal: {}
             Resource:
             - Fn::GetAtt:
               - SupersethomeFilesystem
@@ -1222,8 +1199,6 @@ Resources:
       - Key: com.docker.compose.service
         Value: superset-init
     Type: AWS::IAM::Role
-
-  ## ECS Service - Superset node
   SupersetnodeService:
     DependsOn:
     - DbService
@@ -1421,7 +1396,6 @@ Resources:
                 elasticfilesystem:AccessPointArn:
                   Ref: SupersethomeAccessPoint
             Effect: Allow
-            # Principal: {}
             Resource:
             - Fn::GetAtt:
               - SupersethomeFilesystem
@@ -1434,8 +1408,6 @@ Resources:
       - Key: com.docker.compose.service
         Value: superset-node
     Type: AWS::IAM::Role
-
-  ## ECS Service - Superset celery worker
   SupersetworkerService:
     DependsOn:
     - DbService
@@ -1849,7 +1821,6 @@ Resources:
                 elasticfilesystem:AccessPointArn:
                   Ref: SupersethomeAccessPoint
             Effect: Allow
-            # Principal: {}
             Resource:
             - Fn::GetAtt:
               - SupersethomeFilesystem
@@ -1862,8 +1833,6 @@ Resources:
       - Key: com.docker.compose.service
         Value: superset-worker-beat
     Type: AWS::IAM::Role
-
-  ## superset console url
 Outputs:
   SupersetConsole:
     Description: SupersetConsole URL
