@@ -383,8 +383,8 @@ Resources:
             Service: ecs-tasks.amazonaws.com
         Version: 2012-10-17
       ManagedPolicyArns:
-      - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
-      - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+      - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+      - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
       Tags:
       - Key: com.docker.compose.project
         Value: supersetOnAWS
@@ -632,8 +632,8 @@ Resources:
             Service: ecs-tasks.amazonaws.com
         Version: 2012-10-17
       ManagedPolicyArns:
-      - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
-      - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+      - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+      - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
       Tags:
       - Key: com.docker.compose.project
         Value: supersetOnAWS
@@ -878,8 +878,8 @@ Resources:
             Service: ecs-tasks.amazonaws.com
         Version: 2012-10-17
       ManagedPolicyArns:
-      - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
-      - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+      - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+      - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
       Tags:
       - Key: com.docker.compose.project
         Value: supersetOnAWS
@@ -898,8 +898,8 @@ Resources:
             Service: ecs-tasks.amazonaws.com
         Version: 2012-10-17
       ManagedPolicyArns:
-      - arn:aws:iam::aws:policy/AmazonS3FullAccess
-      - arn:aws:iam::aws:policy/AmazonAthenaFullAccess
+      - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonS3FullAccess
+      - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonAthenaFullAccess
       Policies:
       - PolicyDocument:
           Statement:
@@ -1154,8 +1154,8 @@ Resources:
             Service: ecs-tasks.amazonaws.com
         Version: 2012-10-17
       ManagedPolicyArns:
-      - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
-      - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+      - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+      - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
       Tags:
       - Key: com.docker.compose.project
         Value: supersetOnAWS
@@ -1174,7 +1174,7 @@ Resources:
             Service: ecs-tasks.amazonaws.com
         Version: 2012-10-17
       ManagedPolicyArns:
-      - arn:aws:iam::aws:policy/AmazonECS_FullAccess
+      - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonECS_FullAccess
       Policies:
       - PolicyDocument:
           Statement:
@@ -1365,8 +1365,8 @@ Resources:
             Service: ecs-tasks.amazonaws.com
         Version: 2012-10-17
       ManagedPolicyArns:
-      - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
-      - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+      - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+      - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
       Tags:
       - Key: com.docker.compose.project
         Value: supersetOnAWS
@@ -1576,8 +1576,8 @@ Resources:
             Service: ecs-tasks.amazonaws.com
         Version: 2012-10-17
       ManagedPolicyArns:
-      - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
-      - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+      - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+      - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
       Tags:
       - Key: com.docker.compose.project
         Value: supersetOnAWS
@@ -1790,8 +1790,8 @@ Resources:
             Service: ecs-tasks.amazonaws.com
         Version: 2012-10-17
       ManagedPolicyArns:
-      - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
-      - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+      - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+      - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
       Tags:
       - Key: com.docker.compose.project
         Value: supersetOnAWS
