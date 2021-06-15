@@ -1,6 +1,6 @@
 # Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
-Description: "Apache Superset on AWS offers the customer a reliable, scalable and open-sourced BI application with least effort. Launches into a new VPC. Version v1.0.0" (qs-1s0fbq65f)(SO8018)
+Description: "Apache Superset on AWS offers the customer a reliable, scalable and open-sourced BI application with least effort. Launches into a new VPC. Version v1.0.0 (qs-1s0fbq65f)(SO8018)"
 Metadata:
   QuickStartDocumentation:
     EntrypointName: "Parameters for deploying into an New VPC"

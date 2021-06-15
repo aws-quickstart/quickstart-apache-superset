@@ -1,49 +1,6 @@
 # Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
-<<<<<<< HEAD:templates/superset-on-aws-existing-vpc.template.yaml
-Description: "(SO8018) - Superset on AWS offer customer a reliable, scalable and open-sourced BI applcation with least effort. Version v1.0.0"
-
-Parameters:
-  UserName:
-    Type: String
-    Description: Superset user name.
-  UserPassword:
-    Type: String
-    Description: Superset user password. Strict password policy is recommended.
-    NoEcho: True
-  WithExample:
-    Type: String
-    Default: "yes"
-    Description: >-
-      Enables or disables pre-populating official dashboard example.
-      no = DON'T pre-populate official dashboard example;
-      yes = pre-populate official dashboard example
-  InstallProphet:
-    Type: String
-    Default: "no"
-    Description: >-
-      Enables or disables Prophet library installation for Forecasting Analytics.
-      no = DON'T install Prophet for Forecasting Analytics;
-      yes = install Prophet to enable Forecasting Analytics
-  PublicSubnet1:
-    Type: AWS::EC2::Subnet::Id
-    Description: Public subnet in the first Availability Zone
-  PublicSubnet2:
-    Type: AWS::EC2::Subnet::Id
-    Description: Public subnet in the second Availability Zone
-  PrivateSubnet1:
-    Type: AWS::EC2::Subnet::Id
-    Description: Private subnet in the first Availability Zone
-  PrivateSubnet2:
-    Type: AWS::EC2::Subnet::Id
-    Description: Private subnet in the second Availability Zone
-  Vpc:
-    Type: AWS::EC2::VPC::Id
-    Description: VPC ID to create ECS cluster
-
-=======
-Description: "Apache Superset on AWS offers the customer a reliable, scalable and open-sourced BI application with least effort. Launches into an existing VPC. Version v1.0.0" (qs-1s0fbq688)(SO8018)
->>>>>>> remotes/upstream/develop:templates/superset-entrypoint-existing-vpc.template.yaml
+Description: "Apache Superset on AWS offers the customer a reliable, scalable and open-sourced BI application with least effort. Launches into an existing VPC. Version v1.0.0 (qs-1s0fbq688)(SO8018)"
 Metadata:
   QuickStartDocumentation:
     EntrypointName: "Parameters for deploying into an Existing VPC"
