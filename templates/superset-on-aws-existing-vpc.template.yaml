@@ -36,7 +36,6 @@ Parameters:
   PrivateSubnet2:
     Type: AWS::EC2::Subnet::Id
     Description: Private subnet in the second Availability Zone
-
   Vpc:
     Type: AWS::EC2::VPC::Id
     Description: VPC ID to create ECS cluster
@@ -155,7 +154,7 @@ Resources:
       ContainerDefinitions:
       - Command:
         # private DNS hostnames by default in format of ip-private-ipv4-address.region.compute.internal
-        - cn-north-1.compute.internal
+        - !Sub ${AWS::Region}.compute.internal
         # namespace name created in cloud map
         - supersetOnAWSExistedVPC.local
         Essential: false
@@ -521,7 +520,7 @@ Resources:
     Properties:
       ContainerDefinitions:
       - Command:
-        - cn-north-1.compute.internal
+        - !Sub ${AWS::Region}.compute.internal
         - supersetOnAWSExistedVPC.local
         Essential: false
         Image: docker/ecs-searchdomain-sidecar:1.0
@@ -723,7 +722,7 @@ Resources:
     Properties:
       ContainerDefinitions:
       - Command:
-        - cn-north-1.compute.internal
+        - !Sub ${AWS::Region}.compute.internal
         - supersetOnAWSExistedVPC.local
         Essential: false
         Image: docker/ecs-searchdomain-sidecar:1.0
@@ -986,7 +985,7 @@ Resources:
     Properties:
       ContainerDefinitions:
       - Command:
-        - cn-north-1.compute.internal
+        - !Sub ${AWS::Region}.compute.internal
         - supersetOnAWSExistedVPC.local
         Essential: false
         Image: docker/ecs-searchdomain-sidecar:1.0
@@ -1223,7 +1222,7 @@ Resources:
     Properties:
       ContainerDefinitions:
       - Command:
-        - cn-north-1.compute.internal
+        - !Sub ${AWS::Region}.compute.internal
         - supersetOnAWSExistedVPC.local
         Essential: false
         Image: docker/ecs-searchdomain-sidecar:1.0
@@ -1435,7 +1434,7 @@ Resources:
     Properties:
       ContainerDefinitions:
       - Command:
-        - cn-north-1.compute.internal
+        - !Sub ${AWS::Region}.compute.internal
         - supersetOnAWSExistedVPC.local
         Essential: false
         Image: docker/ecs-searchdomain-sidecar:1.0
@@ -1649,7 +1648,7 @@ Resources:
     Properties:
       ContainerDefinitions:
       - Command:
-        - cn-north-1.compute.internal
+        - !Sub ${AWS::Region}.compute.internal
         - supersetOnAWSExistedVPC.local
         Essential: false
         Image: docker/ecs-searchdomain-sidecar:1.0

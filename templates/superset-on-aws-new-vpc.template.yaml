@@ -283,7 +283,7 @@ Resources:
       ContainerDefinitions:
       - Command:
         # private DNS hostnames by default in format of ip-private-ipv4-address.region.compute.internal
-        - cn-north-1.compute.internal
+        - !Sub ${AWS::Region}.compute.internal
         # namespace name created in cloud map
         - supersetOnAWS.local
         Essential: false
@@ -580,7 +580,7 @@ Resources:
     Properties:
       ContainerDefinitions:
       - Command:
-        - cn-north-1.compute.internal
+        - !Sub ${AWS::Region}.compute.internal
         - supersetOnAWS.local
         Essential: false
         Image: docker/ecs-searchdomain-sidecar:1.0
@@ -782,7 +782,7 @@ Resources:
     Properties:
       ContainerDefinitions:
       - Command:
-        - cn-north-1.compute.internal
+        - !Sub ${AWS::Region}.compute.internal
         - supersetOnAWS.local
         Essential: false
         Image: docker/ecs-searchdomain-sidecar:1.0
@@ -1047,7 +1047,7 @@ Resources:
     Properties:
       ContainerDefinitions:
       - Command:
-        - cn-north-1.compute.internal
+        - !Sub ${AWS::Region}.compute.internal
         - supersetOnAWS.local
         Essential: false
         Image: docker/ecs-searchdomain-sidecar:1.0
@@ -1284,7 +1284,7 @@ Resources:
     Properties:
       ContainerDefinitions:
       - Command:
-        - cn-north-1.compute.internal
+        - !Sub ${AWS::Region}.compute.internal
         - supersetOnAWS.local
         Essential: false
         Image: docker/ecs-searchdomain-sidecar:1.0
@@ -1496,7 +1496,7 @@ Resources:
     Properties:
       ContainerDefinitions:
       - Command:
-        - cn-north-1.compute.internal
+        - !Sub ${AWS::Region}.compute.internal
         - supersetOnAWS.local
         Essential: false
         Image: docker/ecs-searchdomain-sidecar:1.0
@@ -1710,7 +1710,7 @@ Resources:
     Properties:
       ContainerDefinitions:
       - Command:
-        - cn-north-1.compute.internal
+        - !Sub ${AWS::Region}.compute.internal
         - supersetOnAWS.local
         Essential: false
         Image: docker/ecs-searchdomain-sidecar:1.0
