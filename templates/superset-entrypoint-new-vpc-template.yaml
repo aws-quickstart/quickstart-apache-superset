@@ -1,7 +1,49 @@
 # Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
-Description: "(SO8018) - Superset on AWS offer customer a reliable, scalable and open-sourced BI applcation with least effort. Version v1.0.0"
-
+Description: "Apache Superset on AWS offers the customer a reliable, scalable and open-sourced BI application with least effort. Launches into a new VPC. Version v1.0.0" (qs-1s0fbq65f)(SO8018)
+Metadata:
+  QuickStartDocumentation:
+    EntrypointName: "Parameters for deploying into an New VPC"
+    Order: "1"
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: "Account Configuration, set account info"
+        Parameters:
+          - UserName
+          - UserPassword
+          - WithExample
+          - InstallProphet
+      - Label:
+          default: "Network Configuration, create new VPC for AWS ECS Fargate"
+        Parameters:
+          - AvailabilityZones
+          - VpcCIDR
+          - PublicSubnet1CIDR
+          - PublicSubnet2CIDR
+          - PrivateSubnet1CIDR
+          - PrivateSubnet2CIDR
+    ParameterLabels:
+      UserName:
+        default: "Initial Superset User Name"
+      UserPassword:
+        default: "Initial Superset User Password"
+      WithExample:
+        default: "Pre-populate example dashboard"
+      InstallProphet:
+        default: "Install Prophet library"
+      AvailabilityZones:
+        default: "Availability Zones"
+      VpcCIDR:
+        default: "AWS ECS Fargate VPC CIDR Block"
+      PublicSubnet1CIDR:
+        default: "Public Subnet for the first Availability Zone"
+      PublicSubnet2CIDR:
+        default: "Public Subnet for the second Availability Zone"
+      PrivateSubnet1CIDR:
+        default: "Private Subnet for the first Availability Zone"
+      PrivateSubnet2CIDR:
+        default: "Private Subnet for the second Availability Zone"
 Parameters:
   UserName:
     Type: String
@@ -86,50 +128,8 @@ Parameters:
     Description: Region where the Quick Start S3 bucket (QSS3BucketName) is
       hosted. When using your own bucket, you must specify this value.
     Type: String
-
 Conditions:
   UsingDefaultBucket: !Equals [!Ref QSS3BucketName, 'aws-cn-quickstart']
-
-Metadata:
-  AWS::CloudFormation::Interface:
-    ParameterGroups:
-      - Label:
-          default: "Account Configuration, set account info"
-        Parameters:
-          - UserName
-          - UserPassword
-          - WithExample
-          - InstallProphet
-      - Label:
-          default: "Network Configuration, create new VPC for AWS ECS Fargate"
-        Parameters:
-          - AvailabilityZones
-          - VpcCIDR
-          - PublicSubnet1CIDR
-          - PublicSubnet2CIDR
-          - PrivateSubnet1CIDR
-          - PrivateSubnet2CIDR
-    ParameterLabels:
-      UserName:
-        default: "Initial Superset User Name"
-      UserPassword:
-        default: "Initial Superset User Password"
-      WithExample:
-        default: "Pre-populate example dashboard"
-      InstallProphet:
-        default: "Install Prophet library"
-      AvailabilityZones:
-        default: "Availability Zones"
-      VpcCIDR:
-        default: "AWS ECS Fargate VPC CIDR Block"
-      PublicSubnet1CIDR:
-        default: "Public Subnet for the first Availability Zone"
-      PublicSubnet2CIDR:
-        default: "Public Subnet for the second Availability Zone"
-      PrivateSubnet1CIDR:
-        default: "Private Subnet for the first Availability Zone"
-      PrivateSubnet2CIDR:
-        default: "Private Subnet for the second Availability Zone"
 Resources:
   Vpc:
     Type: 'AWS::CloudFormation::Stack'
@@ -147,13 +147,11 @@ Resources:
         PrivateSubnet1ACIDR: !Ref 'PrivateSubnet1CIDR'
         PrivateSubnet2ACIDR: !Ref 'PrivateSubnet2CIDR'
         VPCCIDR: !Ref VpcCIDR
-
   Superset:
-    # DependsOn: Vpc
     Type: 'AWS::CloudFormation::Stack'
     Properties:
       TemplateURL: !Sub
-        - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/superset-on-aws-new-vpc.template.yaml'
+        - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/superset-new-vpc-workload.template.yaml'
         - S3Region: !If [ UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion ]
           S3Bucket: !If [ UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName ]
       Parameters:
@@ -174,8 +172,6 @@ Resources:
           Fn::GetAtt: [Vpc, Outputs.PrivateSubnet2AID]
         VpcID: 
           Fn::GetAtt: [Vpc, Outputs.VPCID]
-
-  ## superset console url
 Outputs:
   SupersetConsole:
     Description: SupersetConsole URL
