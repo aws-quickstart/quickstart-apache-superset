@@ -1,6 +1,5 @@
-# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
-# SPDX-License-Identifier: Apache-2.0
-Description: "Apache Superset on AWS offers the customer a reliable, scalable and open-sourced BI application with least effort. Launches into a new VPC. Version v1.0.0" (qs-1s0fbq65f)(SO8018)
+AWSTemplateFormatVersion: "2010-09-09"
+Description: (SO8018) - Apache Superset on AWS offers the customer a reliable, scalable and open-sourced BI application with least effort. Launches into a new VPC. Version v1.0.0 (qs-1s0fbq65f)
 Metadata:
   QuickStartDocumentation:
     EntrypointName: "Parameters for deploying into an New VPC"
@@ -10,8 +9,8 @@ Metadata:
       - Label:
           default: "Account Configuration, set account info"
         Parameters:
-          - UserName
-          - UserPassword
+          - SuperSetUserName
+          - SuperSetUserPassword
           - WithExample
           - InstallProphet
       - Label:
@@ -24,9 +23,9 @@ Metadata:
           - PrivateSubnet1CIDR
           - PrivateSubnet2CIDR
     ParameterLabels:
-      UserName:
+      SuperSetUserName:
         default: "Initial Superset User Name"
-      UserPassword:
+      SuperSetUserPassword:
         default: "Initial Superset User Password"
       WithExample:
         default: "Pre-populate example dashboard"
@@ -45,13 +44,22 @@ Metadata:
       PrivateSubnet2CIDR:
         default: "Private Subnet for the second Availability Zone"
 Parameters:
-  UserName:
+  SuperSetUserName:
     Type: String
     Description: Superset user name.
-  UserPassword:
-    Type: String
+    AllowedPattern: "[a-zA-Z][a-zA-Z0-9]*"
+    ConstraintDescription: "Must begin with a letter and contain only alphanumeric characters."
+    Default: 'supersetuser'
+    MaxLength: "16"
+    MinLength: "1"
+  SuperSetUserPassword:
     Description: Superset user password. Strict password policy is recommended.
-    NoEcho: True
+    AllowedPattern: "^(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%*?&\\-_])[A-Za-z\\d@$!%*?&\\-_]{8,}$"
+    ConstraintDescription: "Min 8 chars. Must include 1 uppercase, 1 lowercase, 1 number, 1 (non / @ \" ') symbol"
+    MaxLength: "64"
+    MinLength: "8"
+    NoEcho: "True"
+    Type: String
   WithExample:
     Type: String
     Default: "yes"
@@ -70,7 +78,7 @@ Parameters:
     Description: 'List of Availability Zones to use for the subnets in the VPC. Note:
       The logical order is preserved.'
     Type: List<AWS::EC2::AvailabilityZone::Name>
-  VpcCIDR:
+  VPCCIDR:
     Type: String
     Default: 192.168.0.0/16
     Description: Please enter the IP range (CIDR notation) for this VPC
@@ -109,7 +117,7 @@ Parameters:
     ConstraintDescription: Quick Start bucket name can include numbers, lowercase
       letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen
       (-).
-    Default: aws-cn-quickstart
+    Default: aws-quickstart
     Description: S3 bucket name for the Quick Start assets. This string can include
       numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start
       or end with a hyphen (-).
@@ -118,7 +126,7 @@ Parameters:
     AllowedPattern: ^[0-9a-zA-Z-/.]*$
     ConstraintDescription: Quick Start key prefix can include numbers, lowercase letters,
       uppercase letters, hyphens (-), periods (.) and forward slash (/).
-    Default: quickstart-superset-on-aws/
+    Default: quickstart-aws-superset/
     Description: S3 key prefix for the Quick Start assets. Quick Start key prefix
       can include numbers, lowercase letters, uppercase letters, hyphens (-), periods (.) and
       forward slash (/).
@@ -135,7 +143,7 @@ Resources:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
       TemplateURL: !Sub
-        - 'https://${S3Bucket}.s3.${AWS::Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/aws-vpc.template.yaml'
+        - 'https://${S3Bucket}.s3.${AWS::Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}submodules/quickstart-aws-vpc/templates/aws-vpc.template.yaml'
         - S3Region: !If [ UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion ]
           S3Bucket: !If [ UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName ]
       Parameters:
@@ -146,7 +154,7 @@ Resources:
         PublicSubnet2CIDR: !Ref 'PublicSubnet2CIDR'
         PrivateSubnet1ACIDR: !Ref 'PrivateSubnet1CIDR'
         PrivateSubnet2ACIDR: !Ref 'PrivateSubnet2CIDR'
-        VPCCIDR: !Ref VpcCIDR
+        VPCCIDR: !Ref VPCCIDR
   Superset:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
@@ -155,8 +163,8 @@ Resources:
         - S3Region: !If [ UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion ]
           S3Bucket: !If [ UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName ]
       Parameters:
-        UserName: !Ref 'UserName'
-        UserPassword: !Ref 'UserPassword'
+        UserName: !Ref 'SuperSetUserName'
+        UserPassword: !Ref 'SuperSetUserPassword'
         WithExample: !Ref 'WithExample'
         InstallProphet: !Ref 'InstallProphet'
         AvailabilityZones: !Join

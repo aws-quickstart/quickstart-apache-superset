@@ -1,6 +1,6 @@
 # Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
-Description: "Workload for Apache SuperSet into New VPC. Version v1.0.0"(qs-1s0fbq68g)(SO8018)
+Description: (SO8018) - Workload for Apache SuperSet into New VPC. Version v1.0.0. (qs-1s0fbq68g)
 Metadata:
   QuickStartDocumentation:
     EntrypointName: "Parameters for deploying into an Existing VPC"
