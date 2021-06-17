@@ -1,11 +1,11 @@
 project:
-  name: quick-start-superset-on-aws
+  name: quickstart-aws-superset
   owner: quickstart-eng@amazon.com
   package_lambda: false
   parameters:
     QSS3BucketName: $[taskcat_autobucket]
     QSS3BucketRegion: $[taskcat_current_region]
-    QSS3KeyPrefix: 'quickstart-superset-on-aws/'
+    QSS3KeyPrefix: 'quickstart-aws-superset/'
   regions:
     - af-south-1
     - ap-east-1
@@ -32,4 +32,9 @@ project:
     - us-west-2
 tests:
   default:
-    template: ./templates/superset-on-aws.main.template.yaml
+    parameters:
+      AvailabilityZones: $[taskcat_getaz_2]
+      SuperSetUserPassword: P!$[taskcat_genpass_12A]
+    template: templates/superset-entrypoint-new-vpc.template.yaml
+    regions:
+    - us-east-1

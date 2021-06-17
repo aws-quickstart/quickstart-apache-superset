@@ -1,0 +1,11 @@
+/.idea
+/taskcat_outputs
+/venv
+/.venv
+.DS_Store
+/.taskcat
+/output
+__pycache__
+/docs/generated/
+/.python-version
+/.taskcat_overrides.yml

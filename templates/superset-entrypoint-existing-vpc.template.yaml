@@ -1,6 +1,6 @@
 # Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
-Description: "Apache Superset on AWS offers the customer a reliable, scalable and open-sourced BI application with least effort. Launches into an existing VPC. Version v1.0.0 (qs-1s0fbq688)(SO8018)"
+Description: "(SO8018) - Apache Superset on AWS offers the customer a reliable, scalable and open-sourced BI application with least effort. Launches into an existing VPC. Version v1.0.0. (qs-1s0fbq688)"
 Metadata:
   QuickStartDocumentation:
     EntrypointName: "Parameters for deploying into an Existing VPC"
@@ -10,8 +10,8 @@ Metadata:
       - Label:
           default: "Account Configuration, set account info"
         Parameters:
-          - UserName
-          - UserPassword
+          - SuperSetUserName
+          - SuperSetUserPassword
           - WithExample
           - InstallProphet
       - Label:
@@ -23,9 +23,9 @@ Metadata:
           - PrivateSubnet2
           - Vpc
     ParameterLabels:
-      UserName:
+      SuperSetUserName:
         default: "Initial Superset User Name"
-      UserPassword:
+      SuperSetUserPassword:
         default: "Initial Superset User Password"
       WithExample:
         default: "Pre-populate example dashboard"
@@ -42,13 +42,22 @@ Metadata:
       Vpc:
         default: "VPC ID"
 Parameters:
-  UserName:
+  SuperSetUserName:
     Type: String
     Description: Superset user name.
-  UserPassword:
-    Type: String
+    AllowedPattern: "[a-zA-Z][a-zA-Z0-9]*"
+    ConstraintDescription: "Must begin with a letter and contain only alphanumeric characters."
+    Default: 'supersetuser'
+    MaxLength: "16"
+    MinLength: "1"
+  SuperSetUserPassword:
     Description: Superset user password. Strict password policy is recommended.
-    NoEcho: True
+    AllowedPattern: "^(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%*?&\\-_])[A-Za-z\\d@$!%*?&\\-_]{8,}$"
+    ConstraintDescription: "Min 8 chars. Must include 1 uppercase, 1 lowercase, 1 number, 1 (non / @ \" ') symbol"
+    MaxLength: "64"
+    MinLength: "8"
+    NoEcho: "True"
+    Type: String
   WithExample:
     Type: String
     Default: "yes"
@@ -206,9 +215,9 @@ Resources:
         - Name: SUPERSET_PORT
           Value: "8088"
         - Name: SUPERSET_USER
-          Value: !Ref UserName
+          Value: !Ref SuperSetUserName
         - Name: SUPERSET_PASSWORD
-          Value: !Ref UserPassword
+          Value: !Ref SuperSetUserPassword
         Essential: true
         Image: docker.io/library/postgres:10@sha256:e5802ff7be3c818ce23924fe27e29621ba1120bfdc572232dc6cd0154f8c844f
         LinuxParameters: {}
@@ -763,9 +772,9 @@ Resources:
         - Name: SUPERSET_PORT
           Value: "8088"
         - Name: SUPERSET_USER
-          Value: !Ref UserName
+          Value: !Ref SuperSetUserName
         - Name: SUPERSET_PASSWORD
-          Value: !Ref UserPassword
+          Value: !Ref SuperSetUserPassword
         - Name: InstallProphet
           Value: !Ref InstallProphet
         Essential: true
@@ -1022,9 +1031,9 @@ Resources:
         - Name: SUPERSET_PORT
           Value: "8088"
         - Name: SUPERSET_USER
-          Value: !Ref UserName
+          Value: !Ref SuperSetUserName
         - Name: SUPERSET_PASSWORD
-          Value: !Ref UserPassword
+          Value: !Ref SuperSetUserPassword
         Essential: false
         Image: public.ecr.aws/p9r6s5p7/superset:latest
         LinuxParameters: {}
@@ -1257,9 +1266,9 @@ Resources:
         - Name: SUPERSET_PORT
           Value: "8088"
         - Name: SUPERSET_USER
-          Value: !Ref UserName
+          Value: !Ref SuperSetUserName
         - Name: SUPERSET_PASSWORD
-          Value: !Ref UserPassword
+          Value: !Ref SuperSetUserPassword
         Essential: true
         Image: public.ecr.aws/p9r6s5p7/superset-node:latest
         LinuxParameters: {}
@@ -1467,9 +1476,9 @@ Resources:
         - Name: SUPERSET_PORT
           Value: "8088"
         - Name: SUPERSET_USER
-          Value: !Ref UserName
+          Value: !Ref SuperSetUserName
         - Name: SUPERSET_PASSWORD
-          Value: !Ref UserPassword
+          Value: !Ref SuperSetUserPassword
         Essential: true
         Image: public.ecr.aws/p9r6s5p7/superset:latest
         LinuxParameters: {}
@@ -1678,9 +1687,9 @@ Resources:
         - Name: SUPERSET_PORT
           Value: "8088"
         - Name: SUPERSET_USER
-          Value: !Ref UserName
+          Value: !Ref SuperSetUserName
         - Name: SUPERSET_PASSWORD
-          Value: !Ref UserPassword
+          Value: !Ref SuperSetUserPassword
         Essential: true
         Image: public.ecr.aws/p9r6s5p7/superset:latest
         LinuxParameters: {}
