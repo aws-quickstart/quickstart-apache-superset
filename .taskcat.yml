@@ -38,3 +38,9 @@ tests:
     template: templates/superset-entrypoint-new-vpc.template.yaml
     regions:
     - us-east-1
+    - us-west-2
+    - eu-central-1
+    - eu-north-1
+    - ap-south-1
+    - ap-northeast-3
+    - ap-northeast-1
