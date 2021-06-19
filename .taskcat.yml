@@ -5,7 +5,7 @@ project:
   parameters:
     QSS3BucketName: $[taskcat_autobucket]
     QSS3BucketRegion: $[taskcat_current_region]
-    QSS3KeyPrefix: 'quickstart-aws-superset/'
+    QSS3KeyPrefix: 'quickstart-apache-superset/'
   regions:
     - af-south-1
     - ap-east-1
