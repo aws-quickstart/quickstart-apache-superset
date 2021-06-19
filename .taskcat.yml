@@ -1,5 +1,5 @@
 project:
-  name: quickstart-aws-superset
+  name: quickstart-apache-superset
   owner: quickstart-eng@amazon.com
   package_lambda: false
   parameters:
