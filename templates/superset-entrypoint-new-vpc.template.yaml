@@ -17,7 +17,7 @@ Metadata:
           default: "Network Configuration, create new VPC for AWS ECS Fargate"
         Parameters:
           - AvailabilityZones
-          - VpcCIDR
+          - VPCCIDR
           - PublicSubnet1CIDR
           - PublicSubnet2CIDR
           - PrivateSubnet1CIDR
@@ -33,7 +33,7 @@ Metadata:
         default: "Install Prophet library"
       AvailabilityZones:
         default: "Availability Zones"
-      VpcCIDR:
+      VPCCIDR:
         default: "AWS ECS Fargate VPC CIDR Block"
       PublicSubnet1CIDR:
         default: "Public Subnet for the first Availability Zone"

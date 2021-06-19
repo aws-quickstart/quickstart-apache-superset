@@ -17,12 +17,6 @@ Metadata:
       - Label:
           default: "Network Configuration, create new VPC for AWS ECS Fargate"
         Parameters:
-          - AvailabilityZones
-          - VpcCIDR
-          - PublicSubnet1CIDR
-          - PublicSubnet2CIDR
-          - PrivateSubnet1CIDR
-          - PrivateSubnet2CIDR
           - VpcID
           - PublicSubnet1ID
           - PublicSubnet2ID
@@ -37,18 +31,6 @@ Metadata:
         default: "Pre-populate example dashboard"
       InstallProphet:
         default: "Install Prophet library"
-      AvailabilityZones:
-        default: "Availability Zones"
-      VpcCIDR:
-        default: "AWS ECS Fargate VPC CIDR Block"
-      PublicSubnet1CIDR:
-        default: "Public Subnet for the first Availability Zone"
-      PublicSubnet2CIDR:
-        default: "Public Subnet for the second Availability Zone"
-      PrivateSubnet1CIDR:
-        default: "Private Subnet for the first Availability Zone"
-      PrivateSubnet2CIDR:
-        default: "Private Subnet for the second Availability Zone"
       VpcID:
         default: "Vpc ID"
       PublicSubnet1ID:
@@ -81,44 +63,6 @@ Parameters:
       Enables or disables Prophet library installation for Forecasting Analytics.
       no = DON'T install Prophet for Forecasting Analytics;
       yes = install Prophet to enable Forecasting Analytics
-  AvailabilityZones:
-    Description: 'List of Availability Zones to use for the subnets in the VPC. Note:
-      The logical order is preserved.'
-    Type: List<AWS::EC2::AvailabilityZone::Name>
-  VpcCIDR:
-    Type: String
-    Default: 192.168.0.0/16
-    Description: Please enter the IP range (CIDR notation) for this VPC
-    AllowedPattern: "(?:^$|(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2}))"
-    ConstraintDescription: "must be a valid IP CIDR range of the form x.x.x.x/x."
-    MinLength: 9
-    MaxLength: 18
-  PublicSubnet1CIDR:
-    Type: String
-    Default: 192.168.10.0/24
-    Description: Please enter the IP range (CIDR notation) for the public subnet in the first Availability Zone
-    AllowedPattern: "(?:^$|(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2}))"
-    ConstraintDescription: "must be a valid IP CIDR range of the form x.x.x.x/x."
-    MinLength: 9
-    MaxLength: 18
-  PublicSubnet2CIDR:
-    Type: String
-    Default: 192.168.11.0/24
-    Description: Please enter the IP range (CIDR notation) for the public subnet in the second Availability Zone
-    AllowedPattern: "(?:^$|(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2}))"
-    ConstraintDescription: "must be a valid IP CIDR range of the form x.x.x.x/x."
-  PrivateSubnet1CIDR:
-    Type: String
-    Default: 192.168.20.0/24
-    Description: Please enter the IP range (CIDR notation) for the private subnet in the first Availability Zone
-    AllowedPattern: "(?:^$|(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2}))"
-    ConstraintDescription: "must be a valid IP CIDR range of the form x.x.x.x/x."
-  PrivateSubnet2CIDR:
-    Type: String
-    Default: 192.168.21.0/24
-    Description: Please enter the IP range (CIDR notation) for the private subnet in the second Availability Zone
-    AllowedPattern: "(?:^$|(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2}))"
-    ConstraintDescription: "must be a valid IP CIDR range of the form x.x.x.x/x."
   VpcID:
     Type: AWS::EC2::VPC::Id
     Description: VPC Id
