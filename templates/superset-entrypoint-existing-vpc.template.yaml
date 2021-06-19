@@ -417,7 +417,10 @@ Resources:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
   LogGroup:
     Properties:
-      LogGroupName: /docker-compose/supersetOnAWS1207
+      LogGroupName:
+        !Sub
+        - /docker-compose/supersetOnAWS-${StackID}
+        - StackID: !Select [ 2, !Split [ /, !Ref AWS::StackId ] ]
     Type: AWS::Logs::LogGroup
   RedisAccessPoint:
     Properties:
