@@ -87,7 +87,10 @@ Resources:
     Type: AWS::ServiceDiscovery::PrivateDnsNamespace
   Cluster:
     Properties:
-      ClusterName: supersetOnAWS
+      ClusterName:
+        !Sub
+          - supersetOnAWS-${StackID}
+          - StackID: !Select [2, !Split [ /, !Ref AWS::StackId ]]
       Tags:
       - Key: com.docker.compose.project
         Value: supersetOnAWS
