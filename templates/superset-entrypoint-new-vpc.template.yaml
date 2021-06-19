@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: (SO8018) - Apache Superset on AWS offers the customer a reliable, scalable and open-sourced BI application with least effort. Launches into a new VPC. Version v1.0.0 (qs-1s0fbq65f)
+Description: "(SO8018) - Apache Superset on AWS offers the customer a reliable, scalable and open-sourced BI application with least effort. Launches into a new VPC. Version v1.0.0 (qs-1s0fbq65f)"
 Metadata:
   QuickStartDocumentation:
     EntrypointName: "Parameters for deploying into an New VPC"
@@ -17,7 +17,7 @@ Metadata:
           default: "Network Configuration, create new VPC for AWS ECS Fargate"
         Parameters:
           - AvailabilityZones
-          - VpcCIDR
+          - VPCCIDR
           - PublicSubnet1CIDR
           - PublicSubnet2CIDR
           - PrivateSubnet1CIDR
@@ -33,7 +33,7 @@ Metadata:
         default: "Install Prophet library"
       AvailabilityZones:
         default: "Availability Zones"
-      VpcCIDR:
+      VPCCIDR:
         default: "AWS ECS Fargate VPC CIDR Block"
       PublicSubnet1CIDR:
         default: "Public Subnet for the first Availability Zone"
@@ -117,7 +117,7 @@ Parameters:
     ConstraintDescription: Quick Start bucket name can include numbers, lowercase
       letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen
       (-).
-    Default: aws-quickstart
+    Default: aws-cn-quickstart
     Description: S3 bucket name for the Quick Start assets. This string can include
       numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start
       or end with a hyphen (-).

@@ -1,6 +1,6 @@
 # Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
-Description: (SO8018) - Apache Superset on AWS offers the customer a reliable, scalable and open-sourced BI application with least effort. Launches into an existing VPC. Version v1.0.0. (qs-1s0fbq688)
+Description: "(SO8018) - Apache Superset on AWS offers the customer a reliable, scalable and open-sourced BI application with least effort. Launches into an existing VPC. Version v1.0.0. (qs-1s0fbq688)"
 Metadata:
   QuickStartDocumentation:
     EntrypointName: "Parameters for deploying into an Existing VPC"
@@ -160,7 +160,7 @@ Resources:
       ContainerDefinitions:
       - Command:
         # private DNS hostnames by default in format of ip-private-ipv4-address.region.compute.internal
-        - cn-north-1.compute.internal
+        - !Sub ${AWS::Region}.compute.internal
         # namespace name created in cloud map
         - supersetOnAWSExistedVPC.local
         Essential: false
@@ -269,8 +269,8 @@ Resources:
             Service: ecs-tasks.amazonaws.com
         Version: 2012-10-17
       ManagedPolicyArns:
-      - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
-      - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+      - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+      - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
       Tags:
       - Key: com.docker.compose.project
         Value: supersetOnAWSExistedVPC
@@ -517,7 +517,7 @@ Resources:
     Properties:
       ContainerDefinitions:
       - Command:
-        - cn-north-1.compute.internal
+        - !Sub ${AWS::Region}.compute.internal
         - supersetOnAWSExistedVPC.local
         Essential: false
         Image: docker/ecs-searchdomain-sidecar:1.0
@@ -584,8 +584,8 @@ Resources:
             Service: ecs-tasks.amazonaws.com
         Version: 2012-10-17
       ManagedPolicyArns:
-      - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
-      - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+      - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+      - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
       Tags:
       - Key: com.docker.compose.project
         Value: supersetOnAWSExistedVPC
@@ -716,7 +716,7 @@ Resources:
     Properties:
       ContainerDefinitions:
       - Command:
-        - cn-north-1.compute.internal
+        - !Sub ${AWS::Region}.compute.internal
         - supersetOnAWSExistedVPC.local
         Essential: false
         Image: docker/ecs-searchdomain-sidecar:1.0
@@ -829,8 +829,8 @@ Resources:
             Service: ecs-tasks.amazonaws.com
         Version: 2012-10-17
       ManagedPolicyArns:
-      - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
-      - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+      - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+      - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
       Tags:
       - Key: com.docker.compose.project
         Value: supersetOnAWSExistedVPC
@@ -849,8 +849,8 @@ Resources:
             Service: ecs-tasks.amazonaws.com
         Version: 2012-10-17
       ManagedPolicyArns:
-      - arn:aws:iam::aws:policy/AmazonS3FullAccess
-      - arn:aws:iam::aws:policy/AmazonAthenaFullAccess
+      - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonS3FullAccess
+      - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonAthenaFullAccess
       Policies:
       - PolicyDocument:
           Statement:
@@ -976,7 +976,7 @@ Resources:
     Properties:
       ContainerDefinitions:
       - Command:
-        - cn-north-1.compute.internal
+        - !Sub ${AWS::Region}.compute.internal
         - supersetOnAWSExistedVPC.local
         Essential: false
         Image: docker/ecs-searchdomain-sidecar:1.0
@@ -1105,8 +1105,8 @@ Resources:
             Service: ecs-tasks.amazonaws.com
         Version: 2012-10-17
       ManagedPolicyArns:
-      - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
-      - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+      - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+      - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
       Tags:
       - Key: com.docker.compose.project
         Value: supersetOnAWSExistedVPC
@@ -1125,7 +1125,7 @@ Resources:
             Service: ecs-tasks.amazonaws.com
         Version: 2012-10-17
       ManagedPolicyArns:
-      - arn:aws:iam::aws:policy/AmazonECS_FullAccess
+      - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonECS_FullAccess
       Policies:
       - PolicyDocument:
           Statement:
@@ -1210,7 +1210,7 @@ Resources:
     Properties:
       ContainerDefinitions:
       - Command:
-        - cn-north-1.compute.internal
+        - !Sub ${AWS::Region}.compute.internal
         - supersetOnAWSExistedVPC.local
         Essential: false
         Image: docker/ecs-searchdomain-sidecar:1.0
@@ -1316,8 +1316,8 @@ Resources:
             Service: ecs-tasks.amazonaws.com
         Version: 2012-10-17
       ManagedPolicyArns:
-      - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
-      - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+      - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+      - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
       Tags:
       - Key: com.docker.compose.project
         Value: supersetOnAWSExistedVPC
@@ -1419,7 +1419,7 @@ Resources:
     Properties:
       ContainerDefinitions:
       - Command:
-        - cn-north-1.compute.internal
+        - !Sub ${AWS::Region}.compute.internal
         - supersetOnAWSExistedVPC.local
         Essential: false
         Image: docker/ecs-searchdomain-sidecar:1.0
@@ -1527,8 +1527,8 @@ Resources:
             Service: ecs-tasks.amazonaws.com
         Version: 2012-10-17
       ManagedPolicyArns:
-      - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
-      - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+      - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+      - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
       Tags:
       - Key: com.docker.compose.project
         Value: supersetOnAWSExistedVPC
@@ -1630,7 +1630,7 @@ Resources:
     Properties:
       ContainerDefinitions:
       - Command:
-        - cn-north-1.compute.internal
+        - !Sub ${AWS::Region}.compute.internal
         - supersetOnAWSExistedVPC.local
         Essential: false
         Image: docker/ecs-searchdomain-sidecar:1.0
@@ -1738,8 +1738,8 @@ Resources:
             Service: ecs-tasks.amazonaws.com
         Version: 2012-10-17
       ManagedPolicyArns:
-      - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
-      - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+      - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+      - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
       Tags:
       - Key: com.docker.compose.project
         Value: supersetOnAWSExistedVPC
