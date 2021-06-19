@@ -167,9 +167,6 @@ Resources:
         UserPassword: !Ref 'SuperSetUserPassword'
         WithExample: !Ref 'WithExample'
         InstallProphet: !Ref 'InstallProphet'
-        AvailabilityZones: !Join
-          - ','
-          - !Ref 'AvailabilityZones'
         PublicSubnet1ID: 
           Fn::GetAtt: [Vpc, Outputs.PublicSubnet1ID]
         PublicSubnet2ID: 
