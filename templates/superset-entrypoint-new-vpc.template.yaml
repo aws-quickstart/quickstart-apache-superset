@@ -62,7 +62,7 @@ Parameters:
     Type: String
   WithExample:
     Type: String
-    Default: "yes"
+    Default: "no"
     Description: >-
       Enables or disables pre-populating official dashboard example.
       no = DON'T pre-populate official dashboard example;
