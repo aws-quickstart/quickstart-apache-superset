@@ -143,7 +143,7 @@ Resources:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
       TemplateURL: !Sub
-        - 'https://${S3Bucket}.s3.${AWS::Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}submodules/quickstart-aws-vpc/templates/aws-vpc.template.yaml'
+        - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}submodules/quickstart-aws-vpc/templates/aws-vpc.template.yaml'
         - S3Region: !If [ UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion ]
           S3Bucket: !If [ UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName ]
       Parameters:
@@ -167,9 +167,6 @@ Resources:
         UserPassword: !Ref 'SuperSetUserPassword'
         WithExample: !Ref 'WithExample'
         InstallProphet: !Ref 'InstallProphet'
-        AvailabilityZones: !Join
-          - ','
-          - !Ref 'AvailabilityZones'
         PublicSubnet1ID: 
           Fn::GetAtt: [Vpc, Outputs.PublicSubnet1ID]
         PublicSubnet2ID: 
