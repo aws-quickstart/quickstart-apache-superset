@@ -14,6 +14,7 @@ Metadata:
           - UserPassword
           - WithExample
           - InstallProphet
+          - ClusterName
       - Label:
           default: "Network Configuration, create new VPC for AWS ECS Fargate"
         Parameters:
@@ -41,6 +42,8 @@ Metadata:
         default: "Private Subnet Id for the first Availability Zone"
       PrivateSubnet2AID:
         default: "Private Subnet Id for the second Availability Zone"
+      ClusterName:
+        default: " ECS Cluster Name"
 Parameters:
   UserName:
     Type: String
@@ -51,7 +54,7 @@ Parameters:
     NoEcho: True
   WithExample:
     Type: String
-    Default: "yes"
+    Default: "no"
     Description: >-
       Enables or disables pre-populating official dashboard example.
       no = DON'T pre-populate official dashboard example;
@@ -78,19 +81,23 @@ Parameters:
   PrivateSubnet2AID:
     Type: AWS::EC2::Subnet::Id
     Description: Private Subnet Id for the second Availability Zone
+  ClusterName:
+    Default: 'supersetOnAWS'
+    Description: Name for the ECS Cluster to use.
+    Type: String
 Resources:
   CloudMap:
     Properties:
-      Description: Service Map for Docker Compose project supersetOnAWS
-      Name: supersetOnAWS.local
+      Description: Service Map for Docker Compose project
+      Name: !Sub ${ClusterName}.local
       Vpc: !Ref VpcID
     Type: AWS::ServiceDiscovery::PrivateDnsNamespace
   Cluster:
     Properties:
-      ClusterName: supersetOnAWS
+      ClusterName: !Ref ClusterName
       Tags:
       - Key: com.docker.compose.project
-        Value: supersetOnAWS
+        Value: !Ref ClusterName
     Type: AWS::ECS::Cluster
   Default5432Ingress:
     Properties:
@@ -124,12 +131,12 @@ Resources:
     Type: AWS::EC2::SecurityGroupIngress
   DefaultNetwork:
     Properties:
-      GroupDescription: supersetOnAWS Security Group for default network
+      GroupDescription: Security Group for default network
       Tags:
       - Key: com.docker.compose.project
-        Value: supersetOnAWS
+        Value: !Ref ClusterName
       - Key: com.docker.compose.network
-        Value: supersetOnAWS_default
+        Value: !Sub ${ClusterName}_default
       VpcId: !Ref VpcID
     Type: AWS::EC2::SecurityGroup
   DefaultNetworkIngress:
@@ -152,12 +159,15 @@ Resources:
       - !Ref PublicSubnet2ID
       Tags:
       - Key: com.docker.compose.project
-        Value: supersetOnAWS
+        Value: !Ref ClusterName
       Type: network
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
   LogGroup:
     Properties:
-      LogGroupName: /docker-compose/supersetOnAWS1983
+      LogGroupName:
+        !Sub
+          - /docker-compose/${ClusterName}-${StackID}
+          - StackID: !Select [2, !Split [ /, !Ref AWS::StackId ]]
     Type: AWS::Logs::LogGroup
   DbService:
     DependsOn:
@@ -193,7 +203,7 @@ Resources:
           - Arn
       Tags:
       - Key: com.docker.compose.project
-        Value: supersetOnAWS
+        Value: !Ref ClusterName
       - Key: com.docker.compose.service
         Value: db
       TaskDefinition:
@@ -220,7 +230,7 @@ Resources:
         # private DNS hostnames by default in format of ip-private-ipv4-address.region.compute.internal
         - !Sub ${AWS::Region}.compute.internal
         # namespace name created in cloud map
-        - supersetOnAWS.local
+        - !Sub ${ClusterName}.local
         Essential: false
         Image: docker/ecs-searchdomain-sidecar:1.0
         LogConfiguration:
@@ -230,7 +240,7 @@ Resources:
               Ref: LogGroup
             awslogs-region:
               Ref: AWS::Region
-            awslogs-stream-prefix: supersetOnAWS
+            awslogs-stream-prefix: !Ref ClusterName
         Name: Db_ResolvConf_InitContainer
       - DependsOn:
         - Condition: SUCCESS
@@ -286,7 +296,7 @@ Resources:
               Ref: LogGroup
             awslogs-region:
               Ref: AWS::Region
-            awslogs-stream-prefix: supersetOnAWS
+            awslogs-stream-prefix: !Ref ClusterName
         MountPoints:
         - ContainerPath: /var/lib/postgresql/data
           SourceVolume: db_home
@@ -297,7 +307,7 @@ Resources:
           Protocol: tcp
       Cpu: "256"
       ExecutionRoleArn: !GetAtt DbTaskExecutionRole.Arn
-      Family: supersetOnAWS-db
+      Family: !Sub ${ClusterName}-db
       Memory: "512"
       NetworkMode: awsvpc
       RequiresCompatibilities:
@@ -331,7 +341,7 @@ Resources:
       - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
       Tags:
       - Key: com.docker.compose.project
-        Value: supersetOnAWS
+        Value: !Ref ClusterName
       - Key: com.docker.compose.service
         Value: db
     Type: AWS::IAM::Role
@@ -367,7 +377,7 @@ Resources:
         PolicyName: DbDbhomeVolumeMountPolicy
       Tags:
       - Key: com.docker.compose.project
-        Value: supersetOnAWS
+        Value: !Ref ClusterName
       - Key: com.docker.compose.service
         Value: db
     Type: AWS::IAM::Role
@@ -375,11 +385,11 @@ Resources:
     Properties:
       AccessPointTags:
       - Key: com.docker.compose.project
-        Value: supersetOnAWS
+        Value: !Ref ClusterName
       - Key: com.docker.compose.volume
         Value: db_home
       - Key: Name
-        Value: supersetOnAWS_db_home
+        Value: !Sub ${ClusterName}_db_home
       FileSystemId:
         Ref: DbhomeFilesystem
     Type: AWS::EFS::AccessPoint
@@ -389,11 +399,11 @@ Resources:
       Encrypted: true
       FileSystemTags:
       - Key: com.docker.compose.project
-        Value: supersetOnAWS
+        Value: !Ref ClusterName
       - Key: com.docker.compose.volume
         Value: db_home
       - Key: Name
-        Value: supersetOnAWS_db_home
+        Value: !Sub ${ClusterName}_db_home
     Type: AWS::EFS::FileSystem
   DbhomeNFSMountTargetOnSubnetA:
     Properties:
@@ -415,11 +425,11 @@ Resources:
     Properties:
       AccessPointTags:
       - Key: com.docker.compose.project
-        Value: supersetOnAWS
+        Value: !Ref ClusterName
       - Key: com.docker.compose.volume
         Value: redis
       - Key: Name
-        Value: supersetOnAWS_redis
+        Value: !Sub ${ClusterName}_redis
       FileSystemId:
         Ref: RedisFilesystem
     Type: AWS::EFS::AccessPoint
@@ -429,11 +439,11 @@ Resources:
       Encrypted: true
       FileSystemTags:
       - Key: com.docker.compose.project
-        Value: supersetOnAWS
+        Value: !Ref ClusterName
       - Key: com.docker.compose.volume
         Value: redis
       - Key: Name
-        Value: supersetOnAWS_redis
+        Value: !Sub ${ClusterName}_redis
     Type: AWS::EFS::FileSystem
   RedisNFSMountTargetOnSubnetA:
     Properties:
@@ -485,7 +495,7 @@ Resources:
           - Arn
       Tags:
       - Key: com.docker.compose.project
-        Value: supersetOnAWS
+        Value: !Ref ClusterName
       - Key: com.docker.compose.service
         Value: redis
       TaskDefinition:
@@ -510,7 +520,7 @@ Resources:
       ContainerDefinitions:
       - Command:
         - !Sub ${AWS::Region}.compute.internal
-        - supersetOnAWS.local
+        - !Sub ${ClusterName}.local
         Essential: false
         Image: docker/ecs-searchdomain-sidecar:1.0
         LogConfiguration:
@@ -520,7 +530,7 @@ Resources:
               Ref: LogGroup
             awslogs-region:
               Ref: AWS::Region
-            awslogs-stream-prefix: supersetOnAWS
+            awslogs-stream-prefix: !Ref ClusterName
         Name: Redis_ResolvConf_InitContainer
       - DependsOn:
         - Condition: SUCCESS
@@ -535,7 +545,7 @@ Resources:
               Ref: LogGroup
             awslogs-region:
               Ref: AWS::Region
-            awslogs-stream-prefix: supersetOnAWS
+            awslogs-stream-prefix: !Ref ClusterName
         MountPoints:
         - ContainerPath: /data
           SourceVolume: redis
@@ -546,7 +556,7 @@ Resources:
           Protocol: tcp
       Cpu: "256"
       ExecutionRoleArn: !GetAtt RedisTaskExecutionRole.Arn
-      Family: supersetOnAWS-redis
+      Family: !Sub ${ClusterName}-redis
       Memory: "512"
       NetworkMode: awsvpc
       RequiresCompatibilities:
@@ -580,7 +590,7 @@ Resources:
       - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
       Tags:
       - Key: com.docker.compose.project
-        Value: supersetOnAWS
+        Value: !Ref ClusterName
       - Key: com.docker.compose.service
         Value: redis
     Type: AWS::IAM::Role
@@ -616,7 +626,7 @@ Resources:
         PolicyName: RedisRedisVolumeMountPolicy
       Tags:
       - Key: com.docker.compose.project
-        Value: supersetOnAWS
+        Value: !Ref ClusterName
       - Key: com.docker.compose.service
         Value: redis
     Type: AWS::IAM::Role
@@ -662,7 +672,7 @@ Resources:
           - Arn
       Tags:
       - Key: com.docker.compose.project
-        Value: supersetOnAWS
+        Value: !Ref ClusterName
       - Key: com.docker.compose.service
         Value: superset
       TaskDefinition:
@@ -701,7 +711,7 @@ Resources:
       Protocol: TCP
       Tags:
       - Key: com.docker.compose.project
-        Value: supersetOnAWS
+        Value: !Ref ClusterName
       TargetType: ip
       VpcId: !Ref VpcID
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
@@ -710,7 +720,7 @@ Resources:
       ContainerDefinitions:
       - Command:
         - !Sub ${AWS::Region}.compute.internal
-        - supersetOnAWS.local
+        - !Sub ${ClusterName}.local
         Essential: false
         Image: docker/ecs-searchdomain-sidecar:1.0
         LogConfiguration:
@@ -720,7 +730,7 @@ Resources:
               Ref: LogGroup
             awslogs-region:
               Ref: AWS::Region
-            awslogs-stream-prefix: supersetOnAWS
+            awslogs-stream-prefix: !Ref ClusterName
         Name: Superset_ResolvConf_InitContainer
       - Command:
         - /app/docker/docker-bootstrap.sh
@@ -780,7 +790,7 @@ Resources:
               Ref: LogGroup
             awslogs-region:
               Ref: AWS::Region
-            awslogs-stream-prefix: supersetOnAWS
+            awslogs-stream-prefix: !Ref ClusterName
         MountPoints:
         - ContainerPath: /app/superset_home
           SourceVolume: superset_home
@@ -792,7 +802,7 @@ Resources:
         User: root
       Cpu: "4096"
       ExecutionRoleArn: !GetAtt SupersetTaskExecutionRole.Arn
-      Family: supersetOnAWS-superset
+      Family: !Sub ${ClusterName}-superset
       Memory: "16384"
       NetworkMode: awsvpc
       RequiresCompatibilities:
@@ -826,7 +836,7 @@ Resources:
       - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
       Tags:
       - Key: com.docker.compose.project
-        Value: supersetOnAWS
+        Value: !Ref ClusterName
       - Key: com.docker.compose.service
         Value: superset
     Type: AWS::IAM::Role
@@ -864,7 +874,7 @@ Resources:
         PolicyName: SupersetSupersethomeVolumeMountPolicy
       Tags:
       - Key: com.docker.compose.project
-        Value: supersetOnAWS
+        Value: !Ref ClusterName
       - Key: com.docker.compose.service
         Value: superset
     Type: AWS::IAM::Role
@@ -872,11 +882,11 @@ Resources:
     Properties:
       AccessPointTags:
       - Key: com.docker.compose.project
-        Value: supersetOnAWS
+        Value: !Ref ClusterName
       - Key: com.docker.compose.volume
         Value: superset_home
       - Key: Name
-        Value: supersetOnAWS_superset_home
+        Value: !Sub ${ClusterName}_superset_home
       FileSystemId:
         Ref: SupersethomeFilesystem
     Type: AWS::EFS::AccessPoint
@@ -886,11 +896,11 @@ Resources:
       Encrypted: true
       FileSystemTags:
       - Key: com.docker.compose.project
-        Value: supersetOnAWS
+        Value: !Ref ClusterName
       - Key: com.docker.compose.volume
         Value: superset_home
       - Key: Name
-        Value: supersetOnAWS_superset_home
+        Value: !Sub ${ClusterName}_superset_home
     Type: AWS::EFS::FileSystem
   SupersethomeNFSMountTargetOnSubnetA:
     Properties:
@@ -945,7 +955,7 @@ Resources:
           - Arn
       Tags:
       - Key: com.docker.compose.project
-        Value: supersetOnAWS
+        Value: !Ref ClusterName
       - Key: com.docker.compose.service
         Value: superset-init
       TaskDefinition:
@@ -970,7 +980,7 @@ Resources:
       ContainerDefinitions:
       - Command:
         - !Sub ${AWS::Region}.compute.internal
-        - supersetOnAWS.local
+        - !Sub ${ClusterName}.local
         Essential: false
         Image: docker/ecs-searchdomain-sidecar:1.0
         LogConfiguration:
@@ -980,7 +990,7 @@ Resources:
               Ref: LogGroup
             awslogs-region:
               Ref: AWS::Region
-            awslogs-stream-prefix: supersetOnAWS
+            awslogs-stream-prefix: !Ref ClusterName
         Name: Supersetinit_ResolvConf_InitContainer
       - Command:
         - /app/docker/docker-init.sh
@@ -1037,7 +1047,7 @@ Resources:
               Ref: LogGroup
             awslogs-region:
               Ref: AWS::Region
-            awslogs-stream-prefix: supersetOnAWS
+            awslogs-stream-prefix: !Ref ClusterName
         MountPoints:
         - ContainerPath: /app/superset_home
           SourceVolume: superset_home
@@ -1047,7 +1057,7 @@ Resources:
         - ecs
         - update-service
         - --cluster
-        - supersetOnAWS
+        - !Ref ClusterName
         - --service
         - supersetInitService
         - --desired-count
@@ -1064,11 +1074,11 @@ Resources:
               Ref: LogGroup
             awslogs-region:
               Ref: AWS::Region
-            awslogs-stream-prefix: supersetOnAWS
+            awslogs-stream-prefix: !Ref ClusterName
         Name: superset-init-cleanup
       Cpu: "512"
       ExecutionRoleArn: !GetAtt SupersetinitTaskExecutionRole.Arn
-      Family: supersetOnAWS-superset-init
+      Family: !Sub ${ClusterName}-superset-init
       Memory: "1024"
       NetworkMode: awsvpc
       RequiresCompatibilities:
@@ -1102,7 +1112,7 @@ Resources:
       - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
       Tags:
       - Key: com.docker.compose.project
-        Value: supersetOnAWS
+        Value: !Ref ClusterName
       - Key: com.docker.compose.service
         Value: superset-init
     Type: AWS::IAM::Role
@@ -1139,7 +1149,7 @@ Resources:
         PolicyName: SupersetinitSupersethomeVolumeMountPolicy
       Tags:
       - Key: com.docker.compose.project
-        Value: supersetOnAWS
+        Value: !Ref ClusterName
       - Key: com.docker.compose.service
         Value: superset-init
     Type: AWS::IAM::Role
@@ -1179,7 +1189,7 @@ Resources:
           - Arn
       Tags:
       - Key: com.docker.compose.project
-        Value: supersetOnAWS
+        Value: !Ref ClusterName
       - Key: com.docker.compose.service
         Value: superset-node
       TaskDefinition:
@@ -1204,7 +1214,7 @@ Resources:
       ContainerDefinitions:
       - Command:
         - !Sub ${AWS::Region}.compute.internal
-        - supersetOnAWS.local
+        - !Sub ${ClusterName}.local
         Essential: false
         Image: docker/ecs-searchdomain-sidecar:1.0
         LogConfiguration:
@@ -1214,7 +1224,7 @@ Resources:
               Ref: LogGroup
             awslogs-region:
               Ref: AWS::Region
-            awslogs-stream-prefix: supersetOnAWS
+            awslogs-stream-prefix: !Ref ClusterName
         Name: Supersetnode_ResolvConf_InitContainer
       - Command:
         - /app/docker/docker-frontend.sh
@@ -1272,14 +1282,14 @@ Resources:
               Ref: LogGroup
             awslogs-region:
               Ref: AWS::Region
-            awslogs-stream-prefix: supersetOnAWS
+            awslogs-stream-prefix: !Ref ClusterName
         MountPoints:
         - ContainerPath: /app/superset_home
           SourceVolume: superset_home
         Name: superset-node
       Cpu: "4096"
       ExecutionRoleArn: !GetAtt SupersetnodeTaskExecutionRole.Arn
-      Family: supersetOnAWS-superset-node
+      Family: !Sub ${ClusterName}-superset-node
       Memory: "8192"
       NetworkMode: awsvpc
       RequiresCompatibilities:
@@ -1313,7 +1323,7 @@ Resources:
       - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
       Tags:
       - Key: com.docker.compose.project
-        Value: supersetOnAWS
+        Value: !Ref ClusterName
       - Key: com.docker.compose.service
         Value: superset-node
     Type: AWS::IAM::Role
@@ -1348,7 +1358,7 @@ Resources:
         PolicyName: SupersetnodeSupersethomeVolumeMountPolicy
       Tags:
       - Key: com.docker.compose.project
-        Value: supersetOnAWS
+        Value: !Ref ClusterName
       - Key: com.docker.compose.service
         Value: superset-node
     Type: AWS::IAM::Role
@@ -1388,7 +1398,7 @@ Resources:
           - Arn
       Tags:
       - Key: com.docker.compose.project
-        Value: supersetOnAWS
+        Value: !Ref ClusterName
       - Key: com.docker.compose.service
         Value: superset-worker
       TaskDefinition:
@@ -1413,7 +1423,7 @@ Resources:
       ContainerDefinitions:
       - Command:
         - !Sub ${AWS::Region}.compute.internal
-        - supersetOnAWS.local
+        - !Sub ${ClusterName}.local
         Essential: false
         Image: docker/ecs-searchdomain-sidecar:1.0
         LogConfiguration:
@@ -1423,7 +1433,7 @@ Resources:
               Ref: LogGroup
             awslogs-region:
               Ref: AWS::Region
-            awslogs-stream-prefix: supersetOnAWS
+            awslogs-stream-prefix: !Ref ClusterName
         Name: Supersetworker_ResolvConf_InitContainer
       - Command:
         - /app/docker/docker-bootstrap.sh
@@ -1482,7 +1492,7 @@ Resources:
               Ref: LogGroup
             awslogs-region:
               Ref: AWS::Region
-            awslogs-stream-prefix: supersetOnAWS
+            awslogs-stream-prefix: !Ref ClusterName
         MountPoints:
         - ContainerPath: /app/superset_home
           SourceVolume: superset_home
@@ -1490,7 +1500,7 @@ Resources:
         User: root
       Cpu: "4096"
       ExecutionRoleArn: !GetAtt SupersetworkerTaskExecutionRole.Arn
-      Family: supersetOnAWS-superset-worker
+      Family: !Sub ${ClusterName}-superset-worker
       Memory: "16384"
       NetworkMode: awsvpc
       RequiresCompatibilities:
@@ -1524,7 +1534,7 @@ Resources:
       - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
       Tags:
       - Key: com.docker.compose.project
-        Value: supersetOnAWS
+        Value: !Ref ClusterName
       - Key: com.docker.compose.service
         Value: superset-worker
     Type: AWS::IAM::Role
@@ -1560,7 +1570,7 @@ Resources:
         PolicyName: SupersetworkerSupersethomeVolumeMountPolicy
       Tags:
       - Key: com.docker.compose.project
-        Value: supersetOnAWS
+        Value: !Ref ClusterName
       - Key: com.docker.compose.service
         Value: superset-worker
     Type: AWS::IAM::Role
@@ -1602,7 +1612,7 @@ Resources:
           - Arn
       Tags:
       - Key: com.docker.compose.project
-        Value: supersetOnAWS
+        Value: !Ref ClusterName
       - Key: com.docker.compose.service
         Value: superset-worker-beat
       TaskDefinition:
@@ -1627,7 +1637,7 @@ Resources:
       ContainerDefinitions:
       - Command:
         - !Sub ${AWS::Region}.compute.internal
-        - supersetOnAWS.local
+        - !Sub ${ClusterName}.local
         Essential: false
         Image: docker/ecs-searchdomain-sidecar:1.0
         LogConfiguration:
@@ -1637,7 +1647,7 @@ Resources:
               Ref: LogGroup
             awslogs-region:
               Ref: AWS::Region
-            awslogs-stream-prefix: supersetOnAWS
+            awslogs-stream-prefix: !Ref ClusterName
         Name: Supersetworkerbeat_ResolvConf_InitContainer
       - Command:
         - /app/docker/docker-bootstrap.sh
@@ -1696,7 +1706,7 @@ Resources:
               Ref: LogGroup
             awslogs-region:
               Ref: AWS::Region
-            awslogs-stream-prefix: supersetOnAWS
+            awslogs-stream-prefix: !Ref ClusterName
         MountPoints:
         - ContainerPath: /app/superset_home
           SourceVolume: superset_home
@@ -1704,7 +1714,7 @@ Resources:
         User: root
       Cpu: "4096"
       ExecutionRoleArn: !GetAtt SupersetworkerbeatTaskExecutionRole.Arn
-      Family: supersetOnAWS-superset-worker-beat
+      Family: !Sub ${ClusterName}-superset-worker-beat
       Memory: "16384"
       NetworkMode: awsvpc
       RequiresCompatibilities:
@@ -1738,7 +1748,7 @@ Resources:
       - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
       Tags:
       - Key: com.docker.compose.project
-        Value: supersetOnAWS
+        Value: !Ref ClusterName
       - Key: com.docker.compose.service
         Value: superset-worker-beat
     Type: AWS::IAM::Role
@@ -1773,7 +1783,7 @@ Resources:
         PolicyName: SupersetworkerbeatSupersethomeVolumeMountPolicy
       Tags:
       - Key: com.docker.compose.project
-        Value: supersetOnAWS
+        Value: !Ref ClusterName
       - Key: com.docker.compose.service
         Value: superset-worker-beat
     Type: AWS::IAM::Role
