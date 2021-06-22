@@ -2,6 +2,7 @@ project:
   name: quickstart-apache-superset
   owner: quickstart-eng@amazon.com
   package_lambda: false
+  s3_regional_buckets: true
   parameters:
     QSS3BucketName: $[taskcat_autobucket]
     QSS3BucketRegion: $[taskcat_current_region]
@@ -39,23 +40,9 @@ tests:
     template: templates/superset-entrypoint-new-vpc.template.yaml
     regions:
     - us-east-1
-    #- us-west-2
-    #- eu-central-1
-    #- eu-north-1
-    #- ap-south-1
-    #- ap-southeast-1
-    #- ap-northeast-1
-  secondary:
-    parameters:
-      AvailabilityZones: $[taskcat_getaz_2]
-      SuperSetUserPassword: P!$[taskcat_genpass_12A]
-      ClusterName: $[taskcat_genpass_8]
-    template: templates/superset-entrypoint-new-vpc.template.yaml
-    regions:
-    #- us-east-1
     - us-west-2
-    #- eu-central-1
-    #- eu-north-1
-    #- ap-south-1
-    #- ap-southeast-1
-    #- ap-northeast-1
+    - eu-central-1
+    - eu-north-1
+    - ap-south-1
+    - ap-southeast-1
+    - ap-northeast-1
