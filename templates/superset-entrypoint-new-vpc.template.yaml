@@ -13,6 +13,7 @@ Metadata:
           - SuperSetUserPassword
           - WithExample
           - InstallProphet
+          - ClusterName
       - Label:
           default: "Network Configuration, create new VPC for AWS ECS Fargate"
         Parameters:
@@ -28,9 +29,11 @@ Metadata:
       SuperSetUserPassword:
         default: "Initial Superset User Password"
       WithExample:
-        default: "Pre-populate example dashboard"
+        default: "Pre-populate Example Dashboard"
       InstallProphet:
         default: "Install Prophet library"
+      ClusterName:
+        default: "Elastic Container Cluster Name"
       AvailabilityZones:
         default: "Availability Zones"
       VPCCIDR:
@@ -74,6 +77,10 @@ Parameters:
       Enables or disables Prophet library installation for Forecasting Analytics.
       no = DON'T install Prophet for Forecasting Analytics;
       yes = install Prophet to enable Forecasting Analytics
+  ClusterName:
+    Type: String
+    Default: 'supersetOnAWS'
+    Description: Name for the ECS Cluster to use.
   AvailabilityZones:
     Description: 'List of Availability Zones to use for the subnets in the VPC. Note:
       The logical order is preserved.'
@@ -167,6 +174,7 @@ Resources:
         UserPassword: !Ref 'SuperSetUserPassword'
         WithExample: !Ref 'WithExample'
         InstallProphet: !Ref 'InstallProphet'
+        ClusterName: !Ref 'ClusterName'
         PublicSubnet1ID: 
           Fn::GetAtt: [Vpc, Outputs.PublicSubnet1ID]
         PublicSubnet2ID: 
