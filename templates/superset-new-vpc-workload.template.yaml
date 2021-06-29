@@ -1787,6 +1787,354 @@ Resources:
       - Key: com.docker.compose.service
         Value: superset-worker-beat
     Type: AWS::IAM::Role
+  SuperDashboard:
+    Type: 'AWS::CloudWatch::Dashboard'
+    Properties:
+      DashboardBody: !Join 
+        - ''
+        - - |-
+            {
+                "widgets": [
+                    {
+                        "height": 6,
+                        "width": 12,
+                        "y": 0,
+                        "x": 0,
+                        "type": "metric",
+                        "properties": {
+                            "metrics": [
+                                [ "AWS/ECS", "MemoryUtilization", "ServiceName", "
+          - !GetAtt 
+            - SupersetworkerbeatService
+            - Name
+          - '", "ClusterName", "'
+          - !Ref Cluster
+          - '", { "stat": "Average" } ],[ "...", "'
+          - !GetAtt 
+            - SupersetworkerService
+            - Name
+          - '", ".", ".", { "stat": "Average" } ],[ "...", "'
+          - !GetAtt 
+            - RedisService
+            - Name
+          - '", ".", ".", { "stat": "Average" } ],[ "...", "'
+          - !GetAtt 
+            - DbService
+            - Name
+          - '", ".", ".", { "stat": "Average" } ],[ "...", "'
+          - !GetAtt 
+            - SupersetnodeService
+            - Name
+          - '", ".", ".", { "stat": "Average" } ],[ "...", "'
+          - !GetAtt 
+            - SupersetService
+            - Name
+          - >-
+            ", ".", ".", { "stat": "Average" } ] ],"view":
+            "timeSeries","stacked": false,"region": "
+          - !Ref 'AWS::Region'
+          - |-
+            ","period": 300,
+                            "setPeriodToTimeRange": true,
+                            "legend": {
+                                "position": "bottom"
+                            },
+                            "yAxis": {
+                                "left": {
+                                    "label": "",
+                                    "showUnits": true
+                                }
+                            },
+                            "title": "MemoryUtilization-Services"
+                        }
+                    },
+                    {
+                        "height": 6,
+                        "width": 12,
+                        "y": 6,
+                        "x": 0,
+                        "type": "metric",
+                        "properties": {
+                            "metrics": [
+                                [ "AWS/ECS", "CPUUtilization", "ServiceName", "
+          - !GetAtt 
+            - SupersetworkerService
+            - Name
+          - '", "ClusterName", "'
+          - !Ref Cluster
+          - '" ],[ "...", "'
+          - !GetAtt 
+            - SupersetworkerbeatService
+            - Name
+          - '", ".", "." ],[ "...", "'
+          - !GetAtt 
+            - RedisService
+            - Name
+          - '", ".", "." ],[ "...", "'
+          - !GetAtt 
+            - DbService
+            - Name
+          - '", ".", "." ],[ "...", "'
+          - !GetAtt 
+            - SupersetnodeService
+            - Name
+          - '", ".", "." ],[ "...", "'
+          - !GetAtt 
+            - SupersetService
+            - Name
+          - |-
+            ", ".", "." ]
+                            ],
+                            "view": "timeSeries",
+                            "stacked": false,
+                            "region": "
+          - !Ref 'AWS::Region'
+          - |-
+            ",
+                            "period": 300,
+                            "title": "CPUUtilization-Services"
+                        }
+                    },
+                    {
+                        "height": 6,
+                        "width": 12,
+                        "y": 0,
+                        "x": 12,
+                        "type": "metric",
+                        "properties": {
+                            "metrics": [
+                                [ "AWS/ECS", "CPUUtilization", "ServiceName", "
+          - !GetAtt 
+            - SupersetworkerService
+            - Name
+          - '", "ClusterName", "'
+          - !Ref Cluster
+          - >-
+            ", { "stat": "SampleCount", "yAxis": "left", "period": 60 } ],[
+            "...", "
+          - !GetAtt 
+            - SupersetnodeService
+            - Name
+          - '", ".", ".", { "period": 60, "stat": "SampleCount" } ],[ "...", "'
+          - !GetAtt 
+            - DbService
+            - Name
+          - '", ".", ".", { "period": 60, "stat": "SampleCount" } ],[ "...", "'
+          - !GetAtt 
+            - RedisService
+            - Name
+          - |-
+            ", ".", ".", { "period": 60, "stat": "SampleCount" } ],
+                                [ "...", "
+          - !GetAtt 
+            - SupersetService
+            - Name
+          - |-
+            ", ".", ".", { "period": 60, "stat": "SampleCount" } ],
+                                [ "...", "
+          - !GetAtt 
+            - SupersetworkerbeatService
+            - Name
+          - |-
+            ", ".", ".", { "period": 60, "stat": "SampleCount" } ]
+                            ],
+                            "view": "singleValue",
+                            "region": "
+          - !Ref 'AWS::Region'
+          - |-
+            ",
+                            "period": 300,
+                            "stacked": false,
+                            "setPeriodToTimeRange": true,
+                            "title": "RUNNING task count"
+                        }
+                    },
+                    {
+                        "height": 6,
+                        "width": 12,
+                        "y": 12,
+                        "x": 12,
+                        "type": "metric",
+                        "properties": {
+                            "metrics": [
+                                [ "AWS/EFS", "PercentIOLimit", "FileSystemId", "
+          - !Ref DbhomeFilesystem
+          - '", { "id": "m1", "visible": false }],[ "...", "'
+          - !Ref RedisFilesystem
+          - '", { "id": "m2", "visible": false }],[ "...", "'
+          - !Ref SupersethomeFilesystem
+          - >-
+            ", { "id": "m3", "visible": false }],[ { "expression": "100*m1",
+            "label": "
+          - !Ref DbhomeFilesystem
+          - |-
+            ", "id": "e1" } ],
+                    [ { "expression": "100*(m2)", "label": "
+          - !Ref RedisFilesystem
+          - |-
+            ", "id": "e2" } ],
+                    [ { "expression": "100*(m3)", "label": "
+          - !Ref RedisFilesystem
+          - |-
+            ", "id": "e3" } ] ],
+                            "view": "timeSeries",
+                            "stacked": false,
+                            "region": "
+          - !Ref 'AWS::Region'
+          - |-
+            ",
+                            "title": "EFS IO Utilization (%)",
+                            "period": 300
+                        }
+                    },
+                    {
+                        "height": 6,
+                        "width": 12,
+                        "y": 12,
+                        "x": 18,
+                        "type": "metric",
+                        "properties": {
+                            "metrics": [
+                                [ { "expression": "(m1/1048576)/PERIOD(m1)", "label": "Expression1", "id": "e1", "visible": false, "region": "
+          - !Ref 'AWS::Region'
+          - |-
+            " } ],
+                                [ { "expression": "m2/1048576", "label": "Expression2", "id": "e2", "visible": false, "region": "
+          - !Ref 'AWS::Region'
+          - |-
+            " } ],
+                                [ { "expression": "e2-e1", "label": "Expression3", "id": "e3", "visible": false, "region": "
+          - !Ref 'AWS::Region'
+          - |-
+            " } ],
+                                [ { "expression": "((e1)*100)/(e2)", "label": "Throughput Utilization(%)-DbhomeFilesystem ", "id": "e4", "region": "
+          - !Ref 'AWS::Region'
+          - |-
+            " } ],
+                                [ "AWS/EFS", "MeteredIOBytes", "FileSystemId", "
+          - !Ref DbhomeFilesystem
+          - '", { "id": "m1", "period": 60, "visible": false, "region": "'
+          - !Ref 'AWS::Region'
+          - |-
+            " } ],
+                                [ "AWS/EFS", "PermittedThroughput", "FileSystemId", "
+          - !Ref DbhomeFilesystem
+          - '", { "id": "m2", "period": 60, "visible": false, "region": "'
+          - !Ref 'AWS::Region'
+          - |-
+            " } ]
+                            ],
+                            "view": "timeSeries",
+                            "stacked": false,
+                            "region": "
+          - !Ref 'AWS::Region'
+          - |-
+            ",
+                            "stat": "Sum",
+                            "period": 300,
+                            "title": "EFS Throughput Utilization (%)",
+                            "annotations": {
+                                "horizontal": [
+                                    {
+                                        "visible": true,
+                                        "color": "#d13212",
+                                        "label": "Utilization Warning",
+                                        "value": 75,
+                                        "fill": "above",
+                                        "yAxis": "left"
+                                    }
+                                ]
+                            },
+                            "yAxis": {
+                                "left": {
+                                    "max": 100
+                                }
+                            }
+                        }
+                    },
+                    {
+                      "height": 6,
+                      "width": 12,
+                      "y": 12,
+                      "x": 0,
+                      "type": "metric",
+                      "properties": {
+                          "metrics": [
+                              [ "AWS/NetworkELB", "HealthyHostCount", "TargetGroup", "
+          - !GetAtt 
+            - SupersetTCP8088TargetGroup
+            - TargetGroupFullName
+          - '", "AvailabilityZone", "'
+          - !Select 
+            - 0
+            - !GetAZs ''
+          - '", "LoadBalancer", "'
+          - !GetAtt 
+            - LoadBalancer
+            - LoadBalancerFullName
+          - >-
+            ", { "stat": "Minimum" } ],[ ".", "UnHealthyHostCount", ".", ".",
+            ".", ".", ".", ".", { "stat": "Maximum" } ], [ ".",
+            "HealthyHostCount", ".", ".", ".", "
+          - !Select 
+            - 1
+            - !GetAZs ''
+          - >-
+            ", ".", ".", { "stat": "Minimum" } ],[ ".", "UnHealthyHostCount",
+            ".", ".", ".", ".", ".", ".", { "stat": "Maximum" } ]
+                          ],
+                          "view": "timeSeries",
+                          "stacked": true,
+                          "region": "
+          - !Ref 'AWS::Region'
+          - |-
+            ",
+                          "title": "Healthy/UnHealthyHostCount",
+                          "period": 300
+                      }
+                  },
+                  {
+                      "type": "log",
+                      "x": 0,
+                      "y": 18,
+                      "width": 24,
+                      "height": 6,
+                      "properties": {
+                          "query": "SOURCE '
+          - !Ref LogGroup
+          - >-
+            ' | fields @timestamp, @message\n| sort @timestamp desc\n| limit
+            20",
+                          "region": "
+          - !Ref AWS::Region
+          - >-
+            ",
+                          "stacked": false,
+                          "view": "table"
+                      }
+                  },
+                  {
+                      "height": 6,
+                      "width": 24,
+                      "y": 24,
+                      "x": 0,
+                      "type": "log",
+                      "properties": {
+                          "query": "SOURCE '
+          - !Ref LogGroup
+          - >-
+            ' | fields @timestamp, @message\n| filter @message like /Exception/\n| sort @timestamp desc",
+                          "region": "
+          - !Ref AWS::Region
+          - >-
+            ",
+                          "stacked": false,
+                          "title": "Log group: Filter with exceptions",
+                          "view": "table"
+                      }
+                  }
+                ]
+            }
 Outputs:
   SupersetConsole:
     Description: SupersetConsole URL
