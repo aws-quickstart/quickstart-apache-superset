@@ -156,7 +156,7 @@ Parameters:
       hosted. When using your own bucket, you must specify this value.
     Type: String
 Conditions:
-  UsingDefaultBucket: !Equals [!Ref QSS3BucketName, 'aws-cn-quickstart']
+  UsingDefaultBucket: !Equals [ !Ref QSS3BucketName, 'aws-quickstart' ]
 Resources:
   Vpc:
     Type: 'AWS::CloudFormation::Stack'
