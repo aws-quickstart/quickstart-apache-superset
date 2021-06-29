@@ -23,6 +23,12 @@ Metadata:
           - PrivateSubnet1
           - PrivateSubnet2
           - Vpc
+      - Label:
+          default: AWS Quick Start Configuration
+        Parameters:
+          - QSS3BucketName
+          - QSS3KeyPrefix
+          - QSS3BucketRegion
     ParameterLabels:
       SuperSetUserName:
         default: "Initial Superset User Name"
@@ -44,6 +50,12 @@ Metadata:
         default: "VPC ID"
       ClusterName:
         default: "Elastic Container Cluster Name"
+      QSS3BucketName:
+        default: Quick Start S3 bucket name
+      QSS3KeyPrefix:
+        default: Quick Start S3 key prefix
+      QSS3BucketRegion:
+        default: Quick Start S3 bucket Region
 Parameters:
   SuperSetUserName:
     Type: String
