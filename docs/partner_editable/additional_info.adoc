@@ -1,12 +1,5 @@
-// Add steps as necessary for accessing the software, post-configuration, and testing. Don’t include full usage instructions for your software, but add links to your product documentation for that information.
-//Should any sections not be applicable, remove them
-
 == Best practices for using {partner-product-short-name} on AWS
-If you select "yes" for option "WithExample", you can explore sample dashboard with pre-defined dataset after login into Superset console, otherwise you may need connect to your data source (Redshift, S3 etc.) first, customize your dataset, then create dashboard from visualization plugins provided. Kindly follow instructions in official site https://superset.apache.org/docs[Superset Documentation^]
+If you choose *Yes* for option *WithExample*, you can explore a sample dashboard with a predefined dataset after loggin in to the Superset console. Otherwise, you must connect to your data source (for example, Redshift, Amazon S3), customize your data, and create a dashboard from the provided visualization plugins. For more information, see the https://superset.apache.org/docs[Superset documentation^].
 
 == Security
-// Provide post-deployment best practices for using the technology on AWS, including considerations such as migrating data, backups, ensuring high performance, high availability, etc. Link to software documentation for detailed information.
-Apache Superset provide fine grained security model by using user, role and customized permission. User can associate multiple roles that compose of sets of permissions to access different dimension of Superset resources including Model & Action, Views, Data Sources and Databases. And data access granularity is row level, means you can specify only rows met certain condition can only be accessed by user, by creating filters assigned to a particular table. For more information please refer to https://superset.apache.org/docs/security[Superset Security^]
-
-== Other useful information
-//Provide any other information of interest to users, especially focusing on areas where AWS or cloud usage differs from on-premises usage.
+Apache Superset provides a granular security model through users, roles, and customized permissions. Users can associate multiple roles that comprise sets of permissions to access different Superset resources, including *Model & Action*, *Views*, *Data Sources*, and *Databases*. By creating filters assigned to a particular table, the granularity of data access is row level, which means you can specify rows that meet only certain conditions for your users. For more information, see https://superset.apache.org/docs/security[Superset Security^].
