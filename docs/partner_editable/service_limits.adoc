@@ -1,18 +1,15 @@
-// Replace the <n> in each row to specify the number of resources used in this deployment. Remove the rows for resources that aren’t used.
 |===
 |Resource |This deployment uses
 
-// Space needed to maintain table headers
-|VPCs |<1>
-|Nat Gateway |<2>
-|Elastic IP addresses |<2>
-|Security groups |<1>
-|AWS Identity and Access Management (IAM) roles |<14>
-|Application Load Balancers |<1>
-|Elastic Container Service (ECS) Cluster |<1>
-|Elastic Container Service (ECS) Service |<7>
-|Elastic File System (EFS) AccessPoint |<3>
-|Elastic File System (EFS) FileSystem |<3>
-|Cloud Map SeviceDiscovery |<7>
-
+|VPCs | 1
+|Nat gateways | 2
+|Elastic IP addresses | 2
+|Security groups | 1
+|AWS Identity and Access Management (IAM) roles | 14
+|Application Load Balancers | 1
+|Elastic Container Service (ECS) Cluster | 1
+|Elastic Container Service (ECS) Service | 7
+|Elastic File System (EFS) AccessPoint | 3
+|Elastic File System (EFS) FileSystem | 3
+|Cloud Map SeviceDiscovery | 7
 |===
