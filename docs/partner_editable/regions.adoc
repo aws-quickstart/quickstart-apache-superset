@@ -1,4 +1,1 @@
-This Quick Start is supported in any AWS Region in which Amazon Elastic Container Service (ECS) is supported. For a list of supported Regions, see https://docs.aws.amazon.com/general/latest/gr/ecs-service.html[Amazon Elastic Container Service endpoints and quotas^].
-
-
-//Full list: https://docs.aws.amazon.com/general/latest/gr/rande.html
+This Quick Start is supported in AWS Regions where Amazon Elastic Container Service (ECS) is supported. For a list of supported Regions, see https://docs.aws.amazon.com/general/latest/gr/ecs-service.html[Amazon ECS endpoints and quotas^].
