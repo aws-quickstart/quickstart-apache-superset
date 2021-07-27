@@ -2,7 +2,7 @@
 |Resource |This deployment uses
 
 |VPCs | 1
-|Nat gateways | 2
+|NAT gateways | 2
 |Elastic IP addresses | 2
 |Security groups | 1
 |AWS Identity and Access Management (IAM) roles | 14

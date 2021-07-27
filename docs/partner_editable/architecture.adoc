@@ -14,7 +14,7 @@ As shown in <<architecture1>>, the Quick Start sets up the following:
 * A VPC configured with public and private subnets, according to AWS
 best practices, to provide you with your own virtual network on AWS.*
 * In the public subnets:
-** Managed internet gateway for inbound traffic to an Application Load Balancer (ALB).
+** Managed internet gateway for inbound traffic to an Application Load Balancer.
 ** Managed network address translation (NAT) gateways to provide outbound
 internet access for resources in the private subnets.*
 * An Amazon Elastic Container Service (Amazon ECS) cluster to provide all Superset functions, including the core system, cache, database, message queue, and frontend.
