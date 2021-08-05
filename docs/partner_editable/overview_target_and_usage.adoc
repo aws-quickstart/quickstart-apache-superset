@@ -2,6 +2,6 @@
 // Identify your target audience and explain how/why they would use this Quick Start.
 //Avoid borrowing text from third-party websites (copying text from AWS service documentation is fine). Also, avoid marketing-speak, focusing instead on the technical aspect.
 
-This guide provides instructions for deploying the {partner-product-short-name} Quick Start reference architecture on the AWS Cloud.
+This guide provides instructions for deploying the {partner-product-short-name} Quick Start reference architecture on the AWS Cloud. Apache SuperSet is an open-source software that can help with data exploration and visualization. The Quick Start uses ClickHouse as a database management system to hold the data, that can be visualizes through Apache SuperSet.
 
 This Quick Start is for user who plan or already using Apache Superset as their Business Intelligence (BI) platform, to realize transition from data-driven cognition to data-driven decision-making, following AWS best practises.
