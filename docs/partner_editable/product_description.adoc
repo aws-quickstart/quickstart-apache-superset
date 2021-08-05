@@ -2,7 +2,9 @@
 // Briefly describe the software. Use consistent and clear branding. 
 // Include the benefits of using the software on AWS, and provide details on usage scenarios.
 
-Inbound client traffic redirects through an Application Load Balancer (ALB) to an Amazon Elastic Container Service (Amazon ECS) cluster, which is the core service for all Superset modules, including the core business framework, cache, database, and message queue. Each module runs separately as a single Amazon ECS service and relaunches if any of your tasks fail. Discovery of all ECS services is handled by AWS Cloud Map through an internal private DNS, and outbound traffic, such as a software updates, connect through network address translation (NAT) gateways. Persistent data includes queried data, and system metadata is stored in an Elastic File System, in consideration of security and cost.
+//Inbound client traffic redirects through an Application Load Balancer (ALB) to an Amazon Elastic Container Service (Amazon ECS) cluster, which is the core service for all Superset modules, including the core business framework, cache, database, and message queue. Each module runs separately as a single Amazon ECS service and relaunches if any of your tasks fail. Discovery of all ECS services is handled by AWS Cloud Map through an internal private DNS, and outbound traffic, such as a software updates, connect through network address translation (NAT) gateways. Persistent data includes queried data, and system metadata is stored in an Elastic File System, in consideration of security and cost.
+
+Apache Superset is ..., which does this and that and the other. It's for users who want to ...
 
 Compared to the community Apache version, Superset provides the following:
 
@@ -12,3 +14,5 @@ Compared to the community Apache version, Superset provides the following:
 * To display existing data, preinstalled SQL, PostgreSQL, Redshift, Athena, and Clickhouse data-source driver.
 * For future trend predictios, preinstalled timing prediction algorithm that are based on imported data.
 * Visual Kanban for real-time service metrics and comprehensive application monitoring.
+
+CLickHouse is an open-source, column-oriented database management system (DBMS), which can be used for online analytical processing of queries (OLAP). ClickHouse supports linear scalability, compression, and drive optimization. It also comes with features, such as distributed and parallel query processing.

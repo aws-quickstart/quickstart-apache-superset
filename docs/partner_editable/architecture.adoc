@@ -24,11 +24,7 @@ internet access for resources in the private subnets.*
 ** AWS Cloud Map used as discovery service for application resources.
 * Amazon Athena a serverless, interactive query service to query data and analyze big data in Amazon S3 using standard SQL.
 * Amazon RedShift a fully managed, petabyte-scale data warehouse service in the cloud.
-* CLickHouse is one of the most popular open-source column-oriented database management system (DBMS), which can be used for online analytical processing of queries(OLAP). ClickHouse supports linear scalability and compression and hard disk drive optimization. It also comes with features such as distributed and parallel query processing.
-** MySQL Instance - Included in ClickHouse
-** Postgres Instance - Included in ClickHouse
-
-
-
+** A MySQL instance, which is included with ClickHouse.
+** A Postgres instance, which is included with ClickHouse.
 
 [.small]#* The template that deploys the Quick Start into an existing VPC skips the components marked by asterisks and prompts you for your existing VPC configuration.#
