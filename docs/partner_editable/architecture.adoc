@@ -13,22 +13,16 @@ As shown in <<architecture1>>, the Quick Start sets up the following:
 * A highly available architecture that spans two Availability Zones.*
 * A VPC configured with public and private subnets, according to AWS
 best practices, to provide you with your own virtual network on AWS.*
-* In the public subnets:
-** Managed internet gateway for inbound traffic to an Application Load Balancer.
-** Managed network address translation (NAT) gateways to provide outbound
+* A managed internet gateway to direct inbound traffic to an Application Load Balancer, which manages traffic to the Fargate cluster.
+* In the public subnets, managed network address translation (NAT) gateways to provide outbound
 internet access for resources in the private subnets.*
-** An Application Load Balancer that manages the traffic to the Fargate cluster.
 *In the private subnets:
-** An Amazon Elastic Container Service (Amazon ECS) cluster using Fargate, to provide all Superset functions, including the core system, cache, database, message queue, and frontend.
+** An Amazon Elastic Container Service (Amazon ECS) cluster using Fargate to provide all Superset functions, including the core system, cache, database, message queue, and frontend.
 ** An Amazon Elastic File System (Amazon EFS) to provide metadata, query cache data persistency, and share service modules.
-** AWS Cloud Map used as discovery service for application resources.
-* Amazon Athena a serverless, interactive query service to query data and analyze big data in Amazon S3 using standard SQL.
-* Amazon RedShift a fully managed, petabyte-scale data warehouse service in the cloud.
-* CLickHouse is one of the most popular open-source column-oriented database management system (DBMS), which can be used for online analytical processing of queries(OLAP). ClickHouse supports linear scalability and compression and hard disk drive optimization. It also comes with features such as distributed and parallel query processing.
-** MySQL Instance - Included in ClickHouse
-** Postgres Instance - Included in ClickHouse
-
-
-
+** AWS Cloud Map, a discovery service for application resources.
+* Amazon Athena, a serverless, interactive query service to query data and analyze big data in Amazon S3 using standard SQL.
+* Amazon RedShift, a fully managed, petabyte-scale data warehouse service.
+** A MySQL instance, which is included with ClickHouse.
+** A Postgres instance, which is included with ClickHouse.
 
 [.small]#* The template that deploys the Quick Start into an existing VPC skips the components marked by asterisks and prompts you for your existing VPC configuration.#
