@@ -2,7 +2,7 @@ AWSTemplateFormatVersion: "2010-09-09"
 Description: "(SO8018)—Apache Superset on AWS offers the customer a scalable, open-source business intelligence application, version v1.0.0 (qs-1s0fbq65f)."
 Metadata:
   QuickStartDocumentation:
-    EntrypointName: "Parameters for deploying into an new VPC"
+    EntrypointName: "Parameters for deploying into a new VPC"
     Order: "1"
   AWS::CloudFormation::Interface:
     ParameterGroups:
