@@ -1,1 +1,1 @@
-This Quick Start is supported in AWS Regions where Amazon Elastic Container Service (ECS) is supported. For a list of supported Regions, see https://docs.aws.amazon.com/general/latest/gr/ecs-service.html[Amazon ECS endpoints and quotas^].
+This Quick Start is supported in AWS Regions where Amazon ECS is supported. For a list of supported Regions, see https://docs.aws.amazon.com/general/latest/gr/ecs-service.html[Amazon ECS endpoints and quotas^].
