@@ -1,5 +1,5 @@
 // Change the following attributes.
-:quickstart-project-name: quickstart-superset-on-aws
+:quickstart-project-name: quickstart-apache-superset
 :partner-product-name: Apache Superset
 // For the following attribute, if you have no short name, enter the same name as partner-product-name.
 :partner-product-short-name: Apache Superset
