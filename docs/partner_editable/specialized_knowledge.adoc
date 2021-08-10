@@ -3,4 +3,4 @@
 // Include links if helpful. 
 // You don't need to list AWS services or point to general info about AWS; the boilerplate already covers this.
 
-This Quick Start assumes familiarity with basic Business Intelligence (BI) operations, including importing data sources, customizing datasets, and visualizing using a prebuilt dashboard. If data connections are involved, a working knowledge of Athena and Redshift is recommended.
+This Quick Start assumes familiarity with basic business intelligence operations, including importing datasources, customizing datasets, and visualizing using a prebuilt dashboard. If data connections are involved, a working knowledge of Athena and Amazon Redshift is recommended.

@@ -1,1 +1,9 @@
-// placeholder
+
+=== Parameters for deploying into an new VPC
+include::superset-entrypoint-new-vpc.template.adoc[]
+
+=== Parameters for deploying into an existing VPC
+include::superset-entrypoint-existing-vpc.template.adoc[]
+
+=== Parameters for deploying into an Existing VPC
+include::superset-new-vpc-workload.template.adoc[]

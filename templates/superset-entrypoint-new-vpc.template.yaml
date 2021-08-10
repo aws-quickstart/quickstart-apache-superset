@@ -1,13 +1,13 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: "(SO8018) - Apache Superset on AWS offers the customer a reliable, scalable and open-sourced BI application with least effort. Launches into a new VPC. Version v1.0.0 (qs-1s0fbq65f)"
+Description: "(SO8018)—Apache Superset on AWS offers the customer a scalable, open-source business intelligence application, version v1.0.0 (qs-1s0fbq65f)."
 Metadata:
   QuickStartDocumentation:
-    EntrypointName: "Parameters for deploying into an New VPC"
+    EntrypointName: "Parameters for deploying into an new VPC"
     Order: "1"
   AWS::CloudFormation::Interface:
     ParameterGroups:
       - Label:
-          default: "Account Configuration, set account info"
+          default: "AWS account configuration"
         Parameters:
           - SuperSetUserName
           - SuperSetUserPassword
@@ -15,7 +15,7 @@ Metadata:
           - InstallProphet
           - ClusterName
       - Label:
-          default: "Network Configuration, create new VPC for AWS ECS Fargate"
+          default: "Network configuration"
         Parameters:
           - AvailabilityZones
           - VPCCIDR
@@ -24,34 +24,34 @@ Metadata:
           - PrivateSubnet1CIDR
           - PrivateSubnet2CIDR
       - Label:
-          default: AWS Quick Start Configuration
+          default: AWS Quick Start configuration
         Parameters:
           - QSS3BucketName
           - QSS3KeyPrefix
           - QSS3BucketRegion
     ParameterLabels:
       SuperSetUserName:
-        default: "Initial Superset User Name"
+        default: "Initial Superset user name"
       SuperSetUserPassword:
-        default: "Initial Superset User Password"
+        default: "Initial Superset password"
       WithExample:
-        default: "Pre-populate Example Dashboard"
+        default: "Populate example dashboard"
       InstallProphet:
         default: "Install Prophet library"
       ClusterName:
-        default: "Elastic Container Cluster Name"
+        default: "Elastic container cluster name"
       AvailabilityZones:
         default: "Availability Zones"
       VPCCIDR:
-        default: "AWS ECS Fargate VPC CIDR Block"
+        default: "VPC CIDR blocks"
       PublicSubnet1CIDR:
-        default: "Public Subnet for the first Availability Zone"
+        default: "Public subnet for Availability Zone 1"
       PublicSubnet2CIDR:
-        default: "Public Subnet for the second Availability Zone"
+        default: "Public subnet for Availability Zone 2"
       PrivateSubnet1CIDR:
-        default: "Private Subnet for the first Availability Zone"
+        default: "Private subnet for Availability Zone 1"
       PrivateSubnet2CIDR:
-        default: "Private Subnet for the second Availability Zone"
+        default: "Private subnet for Availability Zone 2"
       QSS3BucketName:
         default: Quick Start S3 bucket name
       QSS3KeyPrefix:
@@ -68,9 +68,9 @@ Parameters:
     MaxLength: "16"
     MinLength: "1"
   SuperSetUserPassword:
-    Description: Superset user password. Strict password policy is recommended.
+    Description: Superset password. A strict password policy is recommended.
     AllowedPattern: "^(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%*?&\\-_])[A-Za-z\\d@$!%*?&\\-_]{8,}$"
-    ConstraintDescription: "Min 8 chars. Must include 1 uppercase, 1 lowercase, 1 number, 1 (non / @ \" ') symbol"
+    ConstraintDescription: "Minimum of 8 characters, including 1 uppercase letter, 1 lowercase letter, 1 number, and 1 symbol (excluding / @ \" ')."
     MaxLength: "64"
     MinLength: "8"
     NoEcho: "True"
@@ -79,58 +79,53 @@ Parameters:
     Type: String
     Default: "no"
     Description: >-
-      Enables or disables pre-populating official dashboard example.
-      no = DON'T pre-populate official dashboard example;
-      yes = pre-populate official dashboard example
+      'Enables or disables populating the dashboard example. Setting this parameter to "Yes" populates the dashboard example.'
   InstallProphet:
     Type: String
     Default: "no"
     Description: >-
-      Enables or disables Prophet library installation for Forecasting Analytics.
-      no = DON'T install Prophet for Forecasting Analytics;
-      yes = install Prophet to enable Forecasting Analytics
+      'Enables or disables Prophet library installation for Forecasting Analytics. Setting this parameter to "Yes" installs Prophet to enable Forecasting Analytics.'
   ClusterName:
     Type: String
     Default: 'supersetOnAWS'
-    Description: Name for the ECS Cluster to use.
+    Description: Name of the Amazon ECS cluster.
   AvailabilityZones:
-    Description: 'List of Availability Zones to use for the subnets in the VPC. Note:
-      The logical order is preserved.'
+    Description: 'List of Availability Zones to use for the VPC subnets.'
     Type: List<AWS::EC2::AvailabilityZone::Name>
   VPCCIDR:
     Type: String
     Default: 192.168.0.0/16
-    Description: Please enter the IP range (CIDR notation) for this VPC
+    Description: Enter the IP range (CIDR notation) for this VPC.
     AllowedPattern: "(?:^$|(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2}))"
-    ConstraintDescription: "must be a valid IP CIDR range of the form x.x.x.x/x."
+    ConstraintDescription: "Must be a valid IP CIDR range of the form x.x.x.x/x."
     MinLength: 9
     MaxLength: 18
   PublicSubnet1CIDR:
     Type: String
     Default: 192.168.10.0/24
-    Description: Please enter the IP range (CIDR notation) for the public subnet in the first Availability Zone
+    Description: 'Enter the IP range (CIDR notation) for the public subnet in the Availability Zone 1.'
     AllowedPattern: "(?:^$|(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2}))"
-    ConstraintDescription: "must be a valid IP CIDR range of the form x.x.x.x/x."
+    ConstraintDescription: "Must be a valid IP CIDR range of the form x.x.x.x/x."
     MinLength: 9
     MaxLength: 18
   PublicSubnet2CIDR:
     Type: String
     Default: 192.168.11.0/24
-    Description: Please enter the IP range (CIDR notation) for the public subnet in the second Availability Zone
+    Description: 'Enter the IP range (CIDR notation) for the public subnet in Availability Zone 2.'
     AllowedPattern: "(?:^$|(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2}))"
-    ConstraintDescription: "must be a valid IP CIDR range of the form x.x.x.x/x."
+    ConstraintDescription: "Must be a valid IP CIDR range of the form x.x.x.x/x."
   PrivateSubnet1CIDR:
     Type: String
     Default: 192.168.20.0/24
-    Description: Please enter the IP range (CIDR notation) for the private subnet in the first Availability Zone
+    Description: 'Enter the IP range (CIDR notation) for the private subnet in Availability Zone 1.'
     AllowedPattern: "(?:^$|(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2}))"
-    ConstraintDescription: "must be a valid IP CIDR range of the form x.x.x.x/x."
+    ConstraintDescription: "Must be a valid IP CIDR range of the form x.x.x.x/x."
   PrivateSubnet2CIDR:
     Type: String
     Default: 192.168.21.0/24
-    Description: Please enter the IP range (CIDR notation) for the private subnet in the second Availability Zone
+    Description: 'Enter the IP range (CIDR notation) for the private subnet in Availability Zone 2.'
     AllowedPattern: "(?:^$|(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2}))"
-    ConstraintDescription: "must be a valid IP CIDR range of the form x.x.x.x/x."
+    ConstraintDescription: "Must be a valid IP CIDR range of the form x.x.x.x/x."
   QSS3BucketName:
     AllowedPattern: ^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$
     ConstraintDescription: Quick Start bucket name can include numbers, lowercase
@@ -144,16 +139,16 @@ Parameters:
   QSS3KeyPrefix:
     AllowedPattern: ^[0-9a-zA-Z-/.]*$
     ConstraintDescription: Quick Start key prefix can include numbers, lowercase letters,
-      uppercase letters, hyphens (-), periods (.) and forward slash (/).
+      uppercase letters, hyphens (-), periods (.) and forward slashes (/).
     Default: quickstart-aws-superset/
     Description: S3 key prefix for the Quick Start assets. Quick Start key prefix
       can include numbers, lowercase letters, uppercase letters, hyphens (-), periods (.) and
-      forward slash (/).
+      forward slashes (/).
     Type: String
   QSS3BucketRegion:
     Default: 'cn-north-1'
-    Description: Region where the Quick Start S3 bucket (QSS3BucketName) is
-      hosted. When using your own bucket, you must specify this value.
+    Description: 'Region where the Quick Start S3 bucket (QSS3BucketName) is
+      hosted. When using your own bucket, you must specify this value.'
     Type: String
 Conditions:
   UsingDefaultBucket: !Equals [ !Ref QSS3BucketName, 'aws-quickstart' ]

@@ -1,6 +1,6 @@
 === Confirm your AWS account configuration
 
-. Sign in to your AWS account at https://aws.amazon.com (https://www.amazonaws.cn/en/ for China Regions) with an IAM user role that has the necessary permissions. For more information, see link:#_planning_the_deployment[Planning the deployment], earlier in this guide.
+. Sign in to your AWS account at https://aws.amazon.com[https://aws.amazon.com^] (for China Regions, sign in at https://www.amazonaws.cn/en/[https://www.amazonaws.cn/en/^]) with an IAM user role that has the necessary permissions. For more information, see link:#_planning_the_deployment[Planning the deployment], earlier in this guide.
 . Ensure that your AWS account is configured correctly, as discussed in the link:#_technical_requirements[Technical requirements] section.
 
 ifdef::marketplace_subscription[]
@@ -27,11 +27,11 @@ Each deployment takes about {deployment_time} to complete.
 +
 [cols="3,1"]
 |===
-^|https://superset-template.s3.cn-north-1.amazonaws.com.cn/superset-on-aws-existing-vpc.template.yaml[Deploy {partner-product-short-name} into a existing VPC on AWS^]
-^|http://qs_template_permalink[View template^]
+^|https://fwd.aws/q7qnb?[Deploy {partner-product-short-name} into a new VPC on AWS^]
+^|https://fwd.aws/J5d9j?[View template^]
 
-^|https://superset-template.s3.cn-north-1.amazonaws.com.cn/superset-on-aws.main.template.yaml[Deploy {partner-product-short-name} into an new VPC on AWS^]
-^|http://qs_template_permalink[View template^]
+^|https://fwd.aws/jWBdy?[Deploy {partner-product-short-name} into an existing VPC on AWS^]
+^|https://fwd.aws/XbeE7?[View template^]
 |===
 +
 . Check the AWS Region that’s displayed in the upper-right corner of the navigation bar, and change it if necessary. This Region is where the network infrastructure for {partner-product-short-name} is built. The template launches in the {default_deployment_region} Region by default. For other choices, see link:#_supported_regions[Supported Regions], earlier in this guide.

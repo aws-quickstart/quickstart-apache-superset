@@ -2,13 +2,15 @@
 // Briefly describe the software. Use consistent and clear branding. 
 // Include the benefits of using the software on AWS, and provide details on usage scenarios.
 
-Inbound client traffic redirects through an Application Load Balancer (ALB) to an Amazon Elastic Container Service (Amazon ECS) cluster, which is the core service for all Superset modules, including the core business framework, cache, database, and message queue. Each module runs separately as a single Amazon ECS service and relaunches if any of your tasks fail. Discovery of all ECS services is handled by AWS Cloud Map through an internal private DNS, and outbound traffic, such as a software updates, connect through network address translation (NAT) gateways. Persistent data includes queried data, and system metadata is stored in an Elastic File System, in consideration of security and cost.
+Inbound client traffic redirects through an Application Load Balancer to an Amazon Elastic Container Service (Amazon ECS) cluster. Amazon ECS is the core service for all Superset modules, including the core business framework, cache, database, and message queue. Each module runs separately as a single Amazon ECS instance and relaunches if any tasks fail.
+
+Discovery of all Amazon ECS services is handled by AWS Cloud Map through an internal, private DNS. Outbound traffic, such as for software updates, connects through network address translation (NAT) gateways. Persistent data, which includes queried data and system metadata, is stored in an Elastic File System according to security and cost considerations.
 
 Compared to the community Apache version, Superset provides the following:
 
-* Core modules (that is, Superset, Cache, and Database) that are highly available.
+* Core modules (that is, Superset, cache, and database) that are highly available.
 * Business data (that is, metadata, query data, and interactive data) persistence.
 * Platform elasticity and scalability. Users do not need to maintain the infrastructure and associated resource scheduling.
-* To display existing data, preinstalled SQL, PostgreSQL, Redshift, Athena, and Clickhouse data-source driver.
-* For future trend predictios, preinstalled timing prediction algorithm that are based on imported data.
+* To display existing data, preinstalled SQL, PostgreSQL, Amazon Redshift, Athena, and ClickHouse data-source driver.
+* For future trend predictions, a preinstalled timing-prediction algorithm that is based on imported data.
 * Visual Kanban for real-time service metrics and comprehensive application monitoring.

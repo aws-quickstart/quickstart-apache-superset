@@ -2,14 +2,14 @@
 |Resource |This deployment uses
 
 |VPCs | 1
-|Nat gateways | 2
+|NAT gateways | 2
 |Elastic IP addresses | 2
 |Security groups | 1
 |AWS Identity and Access Management (IAM) roles | 14
 |Application Load Balancers | 1
-|Elastic Container Service (ECS) Cluster | 1
-|Elastic Container Service (ECS) Service | 7
-|Elastic File System (EFS) AccessPoint | 3
-|Elastic File System (EFS) FileSystem | 3
-|Cloud Map SeviceDiscovery | 7
+|Amazon ECS clusters | 1
+|Amazon ECS services | 7
+|Amazon EFS access points | 3
+|Amazon EFS file systems | 3
+|AWS Cloud Map https://docs.aws.amazon.com/cloud-map/latest/api/API_DiscoverInstances.html[DiscoverInstances^] | 7
 |===

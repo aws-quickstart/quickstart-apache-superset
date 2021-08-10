@@ -1,14 +1,14 @@
 # Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
-Description: "(SO8018) - Apache Superset on AWS offers the customer a reliable, scalable and open-sourced BI application with least effort. Launches into an existing VPC. Version v1.0.0. (qs-1s0fbq688)"
+Description: "(SO8018)—Apache Superset on AWS offers the customer a scalable, open-source business intelligence application, version v1.0.0. (qs-1s0fbq688)."
 Metadata:
   QuickStartDocumentation:
-    EntrypointName: "Parameters for deploying into an Existing VPC"
+    EntrypointName: "Parameters for deploying into an existing VPC"
     Order: "2"
   AWS::CloudFormation::Interface:
     ParameterGroups:
       - Label:
-          default: "Account Configuration, set account info"
+          default: "Account configuration"
         Parameters:
           - SuperSetUserName
           - SuperSetUserPassword
@@ -16,46 +16,34 @@ Metadata:
           - InstallProphet
           - ClusterName
       - Label:
-          default: "Network Configuration, using exiting VPC for AWS ECS Fargate"
+          default: "Network configuration"
         Parameters:
           - PublicSubnet1
           - PublicSubnet2
           - PrivateSubnet1
           - PrivateSubnet2
           - Vpc
-      - Label:
-          default: AWS Quick Start Configuration
-        Parameters:
-          - QSS3BucketName
-          - QSS3KeyPrefix
-          - QSS3BucketRegion
     ParameterLabels:
       SuperSetUserName:
-        default: "Initial Superset User Name"
+        default: "Initial Superset user name"
       SuperSetUserPassword:
-        default: "Initial Superset User Password"
+        default: "Initial Superset password"
       WithExample:
-        default: "Pre-populate example dashboard"
+        default: "Prepopulate example dashboard"
       InstallProphet:
         default: "Install Prophet library"
       PublicSubnet1:
-        default: "Public Subnet for the first Availability Zone"
+        default: "Public subnet for Availability Zone 1"
       PublicSubnet2:
-        default: "Public Subnet for the second Availability Zone"
+        default: "Public subnet for Availability Zone 2"
       PrivateSubnet1:
-        default: "Private Subnet for the first Availability Zone"
+        default: "Private subnet for Availability Zone 1"
       PrivateSubnet2:
-        default: "Private Subnet for the second Availability Zone"
+        default: "Private subnet for Availability Zone 2"
       Vpc:
         default: "VPC ID"
       ClusterName:
-        default: "Elastic Container Cluster Name"
-      QSS3BucketName:
-        default: Quick Start S3 bucket name
-      QSS3KeyPrefix:
-        default: Quick Start S3 key prefix
-      QSS3BucketRegion:
-        default: Quick Start S3 bucket Region
+        default: "Elastic container cluster name"
 Parameters:
   SuperSetUserName:
     Type: String
@@ -66,9 +54,9 @@ Parameters:
     MaxLength: "16"
     MinLength: "1"
   SuperSetUserPassword:
-    Description: Superset user password. Strict password policy is recommended.
+    Description: Superset password. A strict password policy is recommended.
     AllowedPattern: "^(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%*?&\\-_])[A-Za-z\\d@$!%*?&\\-_]{8,}$"
-    ConstraintDescription: "Min 8 chars. Must include 1 uppercase, 1 lowercase, 1 number, 1 (non / @ \" ') symbol"
+    ConstraintDescription: "Minimum of 8 characters, including 1 uppercase letter, 1 lowercase letter, 1 number, and 1 symbol (excluding / @ \" ')."
     MaxLength: "64"
     MinLength: "8"
     NoEcho: "True"
@@ -77,39 +65,35 @@ Parameters:
     Type: String
     Default: "yes"
     Description: >-
-      Enables or disables pre-populating official dashboard example.
-      no = DON'T pre-populate official dashboard example;
-      yes = pre-populate official dashboard example
+      'Enables or disables populating the dashboard example. Setting this parameter to "Yes" populates the dashboard example.'
   InstallProphet:
     Type: String
     Default: "no"
     Description: >-
-      Enables or disables Prophet library installation for Forecasting Analytics.
-      no = DON'T install Prophet for Forecasting Analytics;
-      yes = install Prophet to enable Forecasting Analytics
+      'Enables or disables Prophet library installation for Forecasting Analytics. Setting this parameter to "Yes" installs Prophet to enable Forecasting Analytics.'
   PublicSubnet1:
     Type: AWS::EC2::Subnet::Id
-    Description: Public subnet in the first Availability Zone
+    Description: Public subnet in Availability Zone 1.
   PublicSubnet2:
     Type: AWS::EC2::Subnet::Id
-    Description: Public subnet in the second Availability Zone
+    Description: Public subnet in Availability Zone 2.
   PrivateSubnet1:
     Type: AWS::EC2::Subnet::Id
-    Description: Private subnet in the first Availability Zone
+    Description: Private subnet in Availability Zone 1.
   PrivateSubnet2:
     Type: AWS::EC2::Subnet::Id
-    Description: Private subnet in the second Availability Zone
+    Description: Private subnet in Availability Zone 2.
   Vpc:
     Type: AWS::EC2::VPC::Id
-    Description: VPC ID to create ECS cluster
+    Description: VPC ID to create Amazon ECS cluster.
   ClusterName:
     Type: String
     Default: 'supersetOnAWS'
-    Description: Name for the ECS Cluster to use.
+    Description: Name of the Amazon ECS cluster.
 Resources:
   CloudMap:
     Properties:
-      Description: Service Map for Docker Compose project
+      Description: Service map for Docker compose project.
       Name: !Sub ${ClusterName}.local
       Vpc: !Ref Vpc
     Type: AWS::ServiceDiscovery::PrivateDnsNamespace
@@ -162,7 +146,7 @@ Resources:
     Type: AWS::ECS::Service
   DbServiceDiscoveryEntry:
     Properties:
-      Description: '"db" service discovery entry in Cloud Map'
+      Description: 'Entry for "db" service discovery in AWS Cloud Map.'
       DnsConfig:
         DnsRecords:
         - TTL: 60
@@ -180,7 +164,7 @@ Resources:
       - Command:
         # private DNS hostnames by default in format of ip-private-ipv4-address.region.compute.internal
         - !Sub ${AWS::Region}.compute.internal
-        # namespace name created in cloud map
+        # namespace name created in AWS Cloud Map
         - !Sub ${ClusterName}.local
         Essential: false
         Image: docker/ecs-searchdomain-sidecar:1.0
@@ -403,7 +387,7 @@ Resources:
     Type: AWS::EC2::SecurityGroupIngress
   DefaultNetwork:
     Properties:
-      GroupDescription: Security Group for default network
+      GroupDescription: Security group for default network.
       Tags:
       - Key: com.docker.compose.project
         Value: !Ref ClusterName
@@ -413,7 +397,7 @@ Resources:
     Type: AWS::EC2::SecurityGroup
   DefaultNetworkIngress:
     Properties:
-      Description: Allow communication within network default
+      Description: Allow communication within network default.
       GroupId:
         Ref: DefaultNetwork
       IpProtocol: "-1"
@@ -523,7 +507,7 @@ Resources:
     Type: AWS::ECS::Service
   RedisServiceDiscoveryEntry:
     Properties:
-      Description: '"redis" service discovery entry in Cloud Map'
+      Description: 'Entry for "redis" service discovery in AWS Cloud Map.'
       DnsConfig:
         DnsRecords:
         - TTL: 60
@@ -699,7 +683,7 @@ Resources:
     Type: AWS::ECS::Service
   SupersetServiceDiscoveryEntry:
     Properties:
-      Description: '"superset" service discovery entry in Cloud Map'
+      Description: 'Entry for "superset" service discovery in AWS Cloud Map.'
       DnsConfig:
         DnsRecords:
         - TTL: 60
@@ -982,7 +966,7 @@ Resources:
     Type: AWS::ECS::Service
   SupersetinitServiceDiscoveryEntry:
     Properties:
-      Description: '"superset-init" service discovery entry in Cloud Map'
+      Description: 'Entry for "superset-init" service discovery in AWS Cloud Map.'
       DnsConfig:
         DnsRecords:
         - TTL: 60
@@ -1216,7 +1200,7 @@ Resources:
     Type: AWS::ECS::Service
   SupersetnodeServiceDiscoveryEntry:
     Properties:
-      Description: '"superset-node" service discovery entry in Cloud Map'
+      Description: 'Entry for "superset-node" service discovery in AWS Cloud Map.'
       DnsConfig:
         DnsRecords:
         - TTL: 60
@@ -1425,7 +1409,7 @@ Resources:
     Type: AWS::ECS::Service
   SupersetworkerServiceDiscoveryEntry:
     Properties:
-      Description: '"superset-worker" service discovery entry in Cloud Map'
+      Description: 'Entry for "superset-worker" service discovery in AWS Cloud Map.'
       DnsConfig:
         DnsRecords:
         - TTL: 60
@@ -1636,7 +1620,7 @@ Resources:
     Type: AWS::ECS::Service
   SupersetworkerbeatServiceDiscoveryEntry:
     Properties:
-      Description: '"superset-worker-beat" service discovery entry in Cloud Map'
+      Description: 'Entry for "superset-worker-beat" service discovery in AWS Cloud Map.'
       DnsConfig:
         DnsRecords:
         - TTL: 60
@@ -2153,7 +2137,7 @@ Resources:
             }
 Outputs:
   SupersetConsole:
-    Description: SupersetConsole URL
+    Description: URL of Superset console.
     Value:
       Fn::Sub:
         - ${url}:${port}

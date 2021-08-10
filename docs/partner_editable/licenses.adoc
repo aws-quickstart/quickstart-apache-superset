@@ -1,3 +1,3 @@
 // Include details about any licenses and how to sign up. Provide links as appropriate. If no licenses are required, clarify that. The following paragraphs provide examples of details you can provide. Remove italics, and rephrase as appropriate.
 
-//TODO Add license info. The text that was here is already included in the boilerplate.
+No additional licenses are required to use this Quick Start.
