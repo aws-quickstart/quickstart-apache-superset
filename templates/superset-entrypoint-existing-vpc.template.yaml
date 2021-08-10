@@ -1,6 +1,6 @@
 # Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
-Description: "(SO8018)—Apache Superset on AWS offers the customer a scalable, open-source business intelligence application, version v1.0.0. (qs-1s0fbq688)."
+Description: "(SO8018)—Apache Superset on AWS offers the customer a scalable, open-source business intelligence application, v1.0.0. (qs-1s0fbq688)."
 Metadata:
   QuickStartDocumentation:
     EntrypointName: "Parameters for deploying into an existing VPC"
@@ -64,13 +64,11 @@ Parameters:
   WithExample:
     Type: String
     Default: "yes"
-    Description: >-
-      'Enables or disables populating the dashboard example. Setting this parameter to "Yes" populates the dashboard example.'
+    Description: 'Enables or disables populating the dashboard example. Setting this parameter to "yes" populates the dashboard example.'
   InstallProphet:
     Type: String
     Default: "no"
-    Description: >-
-      'Enables or disables Prophet library installation for Forecasting Analytics. Setting this parameter to "Yes" installs Prophet to enable Forecasting Analytics.'
+    Description: 'Enables or disables Prophet library installation for Forecasting Analytics. Setting this parameter to "yes" installs Prophet to enable Forecasting Analytics.'
   PublicSubnet1:
     Type: AWS::EC2::Subnet::Id
     Description: Public subnet in Availability Zone 1.
