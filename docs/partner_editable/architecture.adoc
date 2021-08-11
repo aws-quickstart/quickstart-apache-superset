@@ -13,15 +13,14 @@ As shown in <<architecture1>>, the Quick Start sets up the following:
 * A highly available architecture that spans two Availability Zones.*
 * A VPC configured with public and private subnets, according to AWS
 best practices, to provide you with your own virtual network on AWS.*
-* A managed internet gateway to direct inbound traffic to an Application Load Balancer, which manages traffic to the Fargate cluster.
-* In the public subnets, managed network address translation (NAT) gateways to provide outbound
-internet access for resources in the private subnets.*
+* A managed internet gateway to direct inbound traffic to an Application Load Balancer, which manages traffic to the AWS Fargate cluster.
+* In the public subnets, managed network address translation (NAT) gateways to provide outbound internet access for resources in the private subnets.*
 * In the private subnets:
-** An Amazon ECS cluster using Fargate to provide all Superset functions, including the core system, cache, database, message queue, and frontend.
+** An Amazon ECS cluster using AWS Fargate to provide all Superset functions, including the core system, cache, database, message queue, and frontend.
 ** Amazon EFS to provide metadata, query cached-data persistency, and share service modules.
 ** AWS Cloud Map, a discovery service for application resources.
-* Amazon Athena, a serverless, interactive query service to query data and analyze big data in Amazon S3 using standard SQL.
-* Amazon Redshift, a fully managed, petabyte-scale data warehouse service.
+* Amazon Athena, a serverless, interactive service to query data and analyze big data in Amazon S3 using standard SQL.
+* Amazon Redshift, a fully managed, data-warehouse service.
 ** A MySQL instance, which is included with ClickHouse.
 ** A Postgres instance, which is included with ClickHouse.
 
