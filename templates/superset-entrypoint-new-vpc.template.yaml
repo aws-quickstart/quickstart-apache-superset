@@ -1,8 +1,8 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: "(SO8018)—Apache Superset on AWS offers the customer a scalable, open-source business intelligence application, version v1.0.0 (qs-1s0fbq65f)."
+Description: "(SO8018)—Apache Superset on AWS offers the customer a scalable, open-source business intelligence application, v1.0.0 (qs-1s0fbq65f)."
 Metadata:
   QuickStartDocumentation:
-    EntrypointName: "Parameters for deploying into an new VPC"
+    EntrypointName: "Parameters for deploying into a new VPC"
     Order: "1"
   AWS::CloudFormation::Interface:
     ParameterGroups:
@@ -78,13 +78,11 @@ Parameters:
   WithExample:
     Type: String
     Default: "no"
-    Description: >-
-      'Enables or disables populating the dashboard example. Setting this parameter to "Yes" populates the dashboard example.'
+    Description: 'Enables or disables populating the dashboard example. Setting this parameter to "yes" populates the dashboard example.'
   InstallProphet:
     Type: String
     Default: "no"
-    Description: >-
-      'Enables or disables Prophet library installation for Forecasting Analytics. Setting this parameter to "Yes" installs Prophet to enable Forecasting Analytics.'
+    Description: 'Enables or disables Prophet library installation for Forecasting Analytics. Setting this parameter to "yes" installs Prophet to enable Forecasting Analytics.'
   ClusterName:
     Type: String
     Default: 'supersetOnAWS'
@@ -103,7 +101,7 @@ Parameters:
   PublicSubnet1CIDR:
     Type: String
     Default: 192.168.10.0/24
-    Description: 'Enter the IP range (CIDR notation) for the public subnet in the Availability Zone 1.'
+    Description: 'Enter the IP range (CIDR notation) for the public subnet in Availability Zone 1.'
     AllowedPattern: "(?:^$|(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2}))"
     ConstraintDescription: "Must be a valid IP CIDR range of the form x.x.x.x/x."
     MinLength: 9
