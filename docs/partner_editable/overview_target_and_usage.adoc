@@ -2,8 +2,8 @@
 // Identify your target audience and explain how/why they would use this Quick Start.
 //Avoid borrowing text from third-party websites (copying text from AWS service documentation is fine). Also, avoid marketing-speak, focusing instead on the technical aspect.
 
-This Quick Start guide provides instructions for deploying the {partner-product-short-name} reference architecture on the AWS Cloud. Apache Superset is open-source software that can help you with data exploration and visualization. It uses ClickHouse as a database management system to store data that can be visualized through Apache Superset.
+This Quick Start guide provides instructions for deploying the {partner-product-short-name} reference architecture on the AWS Cloud. Apache Superset is open-source software that can help you with data exploration and visualization.
 
-ClickHouse is an open-source, column-oriented database management system, which can be used for online analytical processing of queries (OLAP). ClickHouse supports linear scalability, compression, and drive optimization. It also comes with features, such as distributed and parallel query processing. For more information, see the https://clickhouse.tech/[ClickHouse website^].
+This deployment supports many database management systems to store data that can be visualized through Apache Superset. Examples of supported database systems include https://docs.aws.amazon.com/athena/latest/ug/what-is.html[Amazon Athena^], https://docs.aws.amazon.com/redshift/latest/gsg/getting-started.html[Amazon Redshift^], https://clickhouse.tech/[ClickHouse^], MySQL, and PostgreSQL.
 
 This Quick Start is for users who want to use Apache Superset as a business intelligence platform for transitioning from data-driven cognition to data-driven decision making, following AWS best practices.

@@ -11,6 +11,6 @@ Compared to the community Apache version, Superset provides the following:
 * Core modules (that is, Superset, cache, and database) that are highly available.
 * Business data (that is, metadata, query data, and interactive data) persistence.
 * Platform elasticity and scalability. Users do not need to maintain the infrastructure and associated resource scheduling.
-* To display existing data, preinstalled SQL, PostgreSQL, Amazon Redshift, Athena, and ClickHouse data-source driver.
-* For future trend predictions, a preinstalled timing-prediction algorithm that is based on imported data.
+* Visualizations for existing data, preinstalled SQL, PostgreSQL, Amazon Redshift, Amazon Athena, and ClickHouse data-source driver.
+* Future trend predictions, a preinstalled timing-prediction algorithm that is based on imported data.
 * Visual Kanban for real-time service metrics and comprehensive application monitoring.
