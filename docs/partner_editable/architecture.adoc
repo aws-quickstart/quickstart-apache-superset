@@ -21,7 +21,6 @@ best practices, to provide you with your own virtual network on AWS.*
 ** AWS Cloud Map, a discovery service for application resources.
 * Amazon Athena, a serverless, interactive service to query data and analyze big data in Amazon S3 using standard SQL.
 * Amazon Redshift, a fully managed, data-warehouse service.
-** A MySQL instance, which is included with ClickHouse.
-** A Postgres instance, which is included with ClickHouse.
+* Supported database systems, such as Amazon Athena, Amazon Redshift, ClickHouse, MySQL, and PostgreSQL.
 
 [.small]#* The template that deploys the Quick Start into an existing VPC skips the components marked by asterisks and prompts you for your existing VPC configuration.#
