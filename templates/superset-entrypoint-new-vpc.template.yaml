@@ -138,7 +138,7 @@ Parameters:
     AllowedPattern: ^[0-9a-zA-Z-/.]*$
     ConstraintDescription: Quick Start key prefix can include numbers, lowercase letters,
       uppercase letters, hyphens (-), periods (.) and forward slashes (/).
-    Default: quickstart-aws-superset/
+    Default: quickstart-apache-superset/
     Description: S3 key prefix for the Quick Start assets. Quick Start key prefix
       can include numbers, lowercase letters, uppercase letters, hyphens (-), periods (.) and
       forward slashes (/).
@@ -180,15 +180,15 @@ Resources:
         WithExample: !Ref 'WithExample'
         InstallProphet: !Ref 'InstallProphet'
         ClusterName: !Ref 'ClusterName'
-        PublicSubnet1ID: 
+        PublicSubnet1ID:
           Fn::GetAtt: [Vpc, Outputs.PublicSubnet1ID]
-        PublicSubnet2ID: 
+        PublicSubnet2ID:
           Fn::GetAtt: [Vpc, Outputs.PublicSubnet2ID]
-        PrivateSubnet1AID: 
+        PrivateSubnet1AID:
           Fn::GetAtt: [Vpc, Outputs.PrivateSubnet1AID]
-        PrivateSubnet2AID: 
+        PrivateSubnet2AID:
           Fn::GetAtt: [Vpc, Outputs.PrivateSubnet2AID]
-        VpcID: 
+        VpcID:
           Fn::GetAtt: [Vpc, Outputs.VPCID]
 Outputs:
   SupersetConsole:
