@@ -55,9 +55,9 @@ Parameters:
     MinLength: "1"
   SuperSetUserPassword:
     Description: Superset password. A strict password policy is recommended.
-    AllowedPattern: "^(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%*?&\\-_])[A-Za-z\\d@$!%*?&\\-_]{8,}$"
-    ConstraintDescription: "Minimum of 8 characters, including 1 uppercase letter, 1 lowercase letter, 1 number, and 1 symbol (excluding / @ \" ')."
-    MaxLength: "64"
+    AllowedPattern: "^(?=.*\\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^\\w\\d\\s:])([^\\s]){8,16}$"
+    ConstraintDescription: "Length 8~16 with space, Must contain 1 uppercase, 1 lowercase, 1 number, 1 non-alpha numeric number, 1 number (0-9)"
+    MaxLength: "16"
     MinLength: "8"
     NoEcho: "True"
     Type: String
@@ -782,7 +782,7 @@ Resources:
         - Name: InstallProphet
           Value: !Ref InstallProphet
         Essential: true
-        Image: public.ecr.aws/p9r6s5p7/superset:latest
+        Image: public.ecr.aws/p9r6s5p7/superset:v1.4.1
         LinuxParameters: {}
         LogConfiguration:
           LogDriver: awslogs
@@ -1039,7 +1039,7 @@ Resources:
         - Name: SUPERSET_PASSWORD
           Value: !Ref SuperSetUserPassword
         Essential: false
-        Image: public.ecr.aws/p9r6s5p7/superset:latest
+        Image: public.ecr.aws/p9r6s5p7/superset:v1.4.1
         LinuxParameters: {}
         LogConfiguration:
           LogDriver: awslogs
@@ -1274,7 +1274,7 @@ Resources:
         - Name: SUPERSET_PASSWORD
           Value: !Ref SuperSetUserPassword
         Essential: true
-        Image: public.ecr.aws/p9r6s5p7/superset-node:latest
+        Image: public.ecr.aws/p9r6s5p7/superset-node:v1.4.1
         LinuxParameters: {}
         LogConfiguration:
           LogDriver: awslogs
@@ -1484,7 +1484,7 @@ Resources:
         - Name: SUPERSET_PASSWORD
           Value: !Ref SuperSetUserPassword
         Essential: true
-        Image: public.ecr.aws/p9r6s5p7/superset:latest
+        Image: public.ecr.aws/p9r6s5p7/superset:v1.4.1
         LinuxParameters: {}
         LogConfiguration:
           LogDriver: awslogs
@@ -1695,7 +1695,7 @@ Resources:
         - Name: SUPERSET_PASSWORD
           Value: !Ref SuperSetUserPassword
         Essential: true
-        Image: public.ecr.aws/p9r6s5p7/superset:latest
+        Image: public.ecr.aws/p9r6s5p7/superset:v1.4.1
         LinuxParameters: {}
         LogConfiguration:
           LogDriver: awslogs
