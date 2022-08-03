@@ -220,7 +220,7 @@ Resources:
         - Name: SUPERSET_PASSWORD
           Value: !Ref SuperSetUserPassword
         Essential: true
-        Image: docker.io/library/postgres:10@sha256:e5802ff7be3c818ce23924fe27e29621ba1120bfdc572232dc6cd0154f8c844f
+        Image: docker.io/library/postgres:14@sha256:cf3b0cf1dde2a82542e4b9de7f3ad058fdc819dea6499007035b838542b0bd5e
         LinuxParameters: {}
         LogConfiguration:
           LogDriver: awslogs
@@ -538,7 +538,7 @@ Resources:
         - Condition: SUCCESS
           ContainerName: Redis_ResolvConf_InitContainer
         Essential: true
-        Image: docker.io/library/redis:latest@sha256:2d17fb90c268b1c7799234216c875490a35fe8fa13fbc5495b7247d93e77255e
+        Image: docker.io/library/redis:7.0@sha256:5050c3b85c308ec9e9eafb8ac7b3a8742a61cdb298d79851141a500491d45baf
         LinuxParameters: {}
         LogConfiguration:
           LogDriver: awslogs
@@ -782,7 +782,7 @@ Resources:
         - Name: InstallProphet
           Value: !Ref InstallProphet
         Essential: true
-        Image: public.ecr.aws/p9r6s5p7/superset:v1.4.1
+        Image: public.ecr.aws/p9r6s5p7/superset:v2.0.0
         LinuxParameters: {}
         LogConfiguration:
           LogDriver: awslogs
@@ -1039,7 +1039,7 @@ Resources:
         - Name: SUPERSET_PASSWORD
           Value: !Ref SuperSetUserPassword
         Essential: false
-        Image: public.ecr.aws/p9r6s5p7/superset:v1.4.1
+        Image: public.ecr.aws/p9r6s5p7/superset:v2.0.0
         LinuxParameters: {}
         LogConfiguration:
           LogDriver: awslogs
@@ -1274,7 +1274,7 @@ Resources:
         - Name: SUPERSET_PASSWORD
           Value: !Ref SuperSetUserPassword
         Essential: true
-        Image: public.ecr.aws/p9r6s5p7/superset-node:v1.4.1
+        Image: public.ecr.aws/p9r6s5p7/superset-node:v2.0.0
         LinuxParameters: {}
         LogConfiguration:
           LogDriver: awslogs
@@ -1484,7 +1484,7 @@ Resources:
         - Name: SUPERSET_PASSWORD
           Value: !Ref SuperSetUserPassword
         Essential: true
-        Image: public.ecr.aws/p9r6s5p7/superset:v1.4.1
+        Image: public.ecr.aws/p9r6s5p7/superset:v2.0.0
         LinuxParameters: {}
         LogConfiguration:
           LogDriver: awslogs
@@ -1695,7 +1695,7 @@ Resources:
         - Name: SUPERSET_PASSWORD
           Value: !Ref SuperSetUserPassword
         Essential: true
-        Image: public.ecr.aws/p9r6s5p7/superset:v1.4.1
+        Image: public.ecr.aws/p9r6s5p7/superset:v2.0.0
         LinuxParameters: {}
         LogConfiguration:
           LogDriver: awslogs
