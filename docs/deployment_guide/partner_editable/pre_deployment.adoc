@@ -1,0 +1,7 @@
+//Include any predeployment steps here, such as signing up for a Marketplace AMI or making any changes to a partner account. If there are no predeployment steps, leave this file empty.
+
+== Predeployment steps
+
+* For initial exploration, use the following default settings:
++
+image::../docs/deployment_guide/images/launch_options.png[Launch Options]

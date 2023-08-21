@@ -1,3 +1,7 @@
+// Add any unique troubleshooting steps here.
+
+For troubleshooting common Partner Solution issues, refer to the https://fwd.aws/rA69w?[AWS Partner Solution General Information Guide^] and https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/troubleshooting.html[Troubleshooting CloudFormation^].
+
 == Best practices for using {partner-product-short-name} on AWS
 If you choose *Yes* for the *WithExample* option, you can explore a sample dashboard with a predefined dataset after you log in to the Superset console. Otherwise, you must connect to your datasource (for example, Amazon Redshift or Amazon S3), customize your data, and create a dashboard from the provided visualization plugins. For more information, see the https://superset.apache.org/docs[Superset documentation^].
 

@@ -1,7 +1,8 @@
-[submodule "docs/boilerplate"]
-	path = docs/boilerplate
-	url = https://github.com/aws-quickstart/quickstart-documentation-base-common.git
-
 [submodule "submodules/quickstart-aws-vpc"]
 	path = submodules/quickstart-aws-vpc
 	url = https://github.com/aws-quickstart/quickstart-aws-vpc.git
+	branch = main
+[submodule "docs/boilerplate"]
+	path = docs/boilerplate
+	url = https://github.com/aws-ia/aws-ia-documentation-base-common.git
+	branch = main

@@ -1,6 +1,8 @@
-// Replace the content in <>
-// Briefly describe the software. Use consistent and clear branding. 
-// Include the benefits of using the software on AWS, and provide details on usage scenarios.
+This guide covers the information you need to deploy the {partner-product-name} Partner Solution in the AWS Cloud.
+
+This deployment supports many database management systems to store data that can be visualized through Apache Superset. Examples of supported database systems include https://docs.aws.amazon.com/athena/latest/ug/what-is.html[Amazon Athena^], https://docs.aws.amazon.com/redshift/latest/gsg/getting-started.html[Amazon Redshift^], https://clickhouse.tech/[ClickHouse^], MySQL, and PostgreSQL.
+
+This Partner Solution is for users who want to use Apache Superset as a business intelligence platform for transitioning from data-driven cognition to data-driven decision making, following AWS best practices.
 
 Inbound client traffic redirects through an Application Load Balancer to an Amazon Elastic Container Service (Amazon ECS) cluster. Amazon ECS is the core service for all Superset modules, including the core business framework, cache, database, and message queue. Each module runs separately as a single Amazon ECS instance and relaunches if any tasks fail.
 
