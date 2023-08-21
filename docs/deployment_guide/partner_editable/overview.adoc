@@ -1,10 +1,18 @@
 This guide covers the information you need to deploy the {partner-product-name} Partner Solution in the AWS Cloud.
 
-// Fill in the info in <angle brackets> for use on the landing page only: 
-This Amazon Web Services (AWS) Partner Solution deploys [<product name>](<partner's marketing product page>) in the AWS Cloud so that <purpose>. This solution is for <target users> who want to <do what> so that <why>. For more information, refer to the [<product name> documentation](<URL>).
+This deployment supports many database management systems to store data that can be visualized through Apache Superset. Examples of supported database systems include https://docs.aws.amazon.com/athena/latest/ug/what-is.html[Amazon Athena^], https://docs.aws.amazon.com/redshift/latest/gsg/getting-started.html[Amazon Redshift^], https://clickhouse.tech/[ClickHouse^], MySQL, and PostgreSQL.
 
-// Deploying this solution does not guarantee an organization’s compliance with any laws, certifications, policies, or other regulations. [Uncomment this statement only for solutions that relate to compliance. We'll add the corresponding reference part to the landing page and get legal approval before publishing.]
+This Partner Solution is for users who want to use Apache Superset as a business intelligence platform for transitioning from data-driven cognition to data-driven decision making, following AWS best practices.
 
-// For advanced information about the product, troubleshooting, or additional functionality, refer to the https://{partner-solution-github-org}.github.io/{partner-solution-project-name}/operational/index.html[Operational Guide^].
+Inbound client traffic redirects through an Application Load Balancer to an Amazon Elastic Container Service (Amazon ECS) cluster. Amazon ECS is the core service for all Superset modules, including the core business framework, cache, database, and message queue. Each module runs separately as a single Amazon ECS instance and relaunches if any tasks fail.
 
-// For information about using this Partner Solution for migrations, refer to the https://{partner-solution-github-org}.github.io/{partner-solution-project-name}/migration/index.html[Migration Guide^].
+Discovery of all Amazon ECS services is handled by AWS Cloud Map through an internal, private DNS. Outbound traffic, such as for software updates, connects through network address translation (NAT) gateways. Persistent data, which includes queried data and system metadata, is stored in an Elastic File System according to security and cost considerations.
+
+Compared to the community Apache version, Superset provides the following:
+
+* Core modules (that is, Superset, cache, and database) that are highly available.
+* Business data (that is, metadata, query data, and interactive data) persistence.
+* Platform elasticity and scalability. Users do not need to maintain the infrastructure and associated resource scheduling.
+* Visualizations for existing data, preinstalled SQL, PostgreSQL, Amazon Redshift, Amazon Athena, and ClickHouse data-source driver.
+* Future trend predictions, a preinstalled timing-prediction algorithm that is based on imported data.
+* Visual Kanban for real-time service metrics and comprehensive application monitoring.

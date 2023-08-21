@@ -1,3 +1,11 @@
 // Include any postdeployment steps here, such as steps necessary to test that the deployment was successful. If there are no postdeployment steps, leave this file empty.
 
 == Postdeployment steps
+
+* After the stack is deployed successfully, check the outputs for the Superset dashboard address.
++
+image::../docs/deployment_guide/images/result_dashboard.png[Result Output]
++
+* Log in to the Superset dashboard using your preconfigured user name and password.
++
+image::../docs/deployment_guide/images/login_page.png[Login Page]
