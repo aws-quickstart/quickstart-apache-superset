@@ -144,7 +144,7 @@ Parameters:
       forward slashes (/).
     Type: String
   QSS3BucketRegion:
-    Default: 'cn-north-1'
+    Default: 'us-east-1'
     Description: 'Region where the Quick Start S3 bucket (QSS3BucketName) is
       hosted. When using your own bucket, you must specify this value.'
     Type: String

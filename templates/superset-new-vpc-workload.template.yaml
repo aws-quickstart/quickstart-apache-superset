@@ -80,6 +80,32 @@ Parameters:
     Description: Name of the Amazon ECS cluster.
     Type: String
 Resources:
+  SupersetSecretKey:
+      Type: 'AWS::SecretsManager::Secret'
+      Properties: 
+        Name: !Sub ${ClusterName}/secretkey
+        Description: Secret Key for superset app will be used for securely signing the session cookie and encrypting sensitive information on the database.
+        GenerateSecretString:
+          SecretStringTemplate: "{}"
+          GenerateStringKey: "secretkey"
+          PasswordLength: 32
+  SupersetSecretReadPolicy:
+    Type: "AWS::IAM::Policy"
+    Properties:
+      PolicyName: SupersetSecretReadPolicyTest
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - secretsmanager:GetSecretValue
+            Resource: !Ref SupersetSecretKey
+      Roles:
+        - !Ref DbTaskExecutionRole
+        - !Ref SupersetTaskExecutionRole
+        - !Ref SupersetnodeTaskExecutionRole
+        - !Ref SupersetworkerTaskExecutionRole
+        - !Ref SupersetworkerbeatTaskExecutionRole
   CloudMap:
     Properties:
       Description: Service map for Docker compose project.
@@ -256,8 +282,18 @@ Resources:
           Value: "5432"
         - Name: DATABASE_USER
           Value: superset
-        - Name: FLASK_ENV
-          Value: development
+        - Name: EXAMPLES_DB
+          Value: examples
+        - Name: EXAMPLES_HOST
+          Value: db
+        - Name: EXAMPLES_USER
+          Value: examples
+        - Name: EXAMPLES_PASSWORD
+          Value: examples
+        - Name: EXAMPLES_PORT
+          Value: "5432"
+        - Name: FLASK_DEBUG
+          Value: True
         - Name: POSTGRES_DB
           Value: superset
         - Name: POSTGRES_PASSWORD
@@ -280,8 +316,10 @@ Resources:
           Value: !Ref UserName
         - Name: SUPERSET_PASSWORD
           Value: !Ref UserPassword
+        - Name: SECRET_KEY
+          Value: !Sub '{{resolve:secretsmanager:${SupersetSecretKey}::secretkey}}'
         Essential: true
-        Image: docker.io/library/postgres:14@sha256:cf3b0cf1dde2a82542e4b9de7f3ad058fdc819dea6499007035b838542b0bd5e
+        Image: public.ecr.aws/p9r6s5p7/superset-postgres:latest
         LinuxParameters: {}
         LogConfiguration:
           LogDriver: awslogs
@@ -748,8 +786,18 @@ Resources:
           Value: "5432"
         - Name: DATABASE_USER
           Value: superset
-        - Name: FLASK_ENV
-          Value: development
+        - Name: EXAMPLES_DB
+          Value: examples
+        - Name: EXAMPLES_HOST
+          Value: db
+        - Name: EXAMPLES_USER
+          Value: examples
+        - Name: EXAMPLES_PASSWORD
+          Value: examples
+        - Name: EXAMPLES_PORT
+          Value: "5432"
+        - Name: FLASK_DEBUG
+          Value: true
         - Name: POSTGRES_DB
           Value: superset
         - Name: POSTGRES_PASSWORD
@@ -774,8 +822,10 @@ Resources:
           Value: !Ref UserPassword
         - Name: InstallProphet
           Value: !Ref InstallProphet
+        - Name: SECRET_KEY
+          Value: !Sub '{{resolve:secretsmanager:${SupersetSecretKey}::secretkey}}'
         Essential: true
-        Image: public.ecr.aws/p9r6s5p7/superset:v2.0.0
+        Image: public.ecr.aws/p9r6s5p7/superset:latest
         LinuxParameters: {}
         LogConfiguration:
           LogDriver: awslogs
@@ -1007,8 +1057,18 @@ Resources:
           Value: "5432"
         - Name: DATABASE_USER
           Value: superset
-        - Name: FLASK_ENV
-          Value: development
+        - Name: EXAMPLES_DB
+          Value: examples
+        - Name: EXAMPLES_HOST
+          Value: db
+        - Name: EXAMPLES_USER
+          Value: examples
+        - Name: EXAMPLES_PASSWORD
+          Value: examples
+        - Name: EXAMPLES_PORT
+          Value: "5432"
+        - Name: FLASK_DEBUG
+          Value: true
         - Name: POSTGRES_DB
           Value: superset
         - Name: POSTGRES_PASSWORD
@@ -1031,8 +1091,10 @@ Resources:
           Value: !Ref UserName
         - Name: SUPERSET_PASSWORD
           Value: !Ref UserPassword
+        - Name: SECRET_KEY
+          Value: !Sub '{{resolve:secretsmanager:${SupersetSecretKey}::secretkey}}'
         Essential: false
-        Image: public.ecr.aws/p9r6s5p7/superset:v2.0.0
+        Image: public.ecr.aws/p9r6s5p7/superset:latest
         LinuxParameters: {}
         LogConfiguration:
           LogDriver: awslogs
@@ -1242,8 +1304,18 @@ Resources:
           Value: "5432"
         - Name: DATABASE_USER
           Value: superset
-        - Name: FLASK_ENV
-          Value: development
+        - Name: EXAMPLES_DB
+          Value: examples
+        - Name: EXAMPLES_HOST
+          Value: db
+        - Name: EXAMPLES_USER
+          Value: examples
+        - Name: EXAMPLES_PASSWORD
+          Value: examples
+        - Name: EXAMPLES_PORT
+          Value: "5432"
+        - Name: FLASK_DEBUG
+          Value: true
         - Name: POSTGRES_DB
           Value: superset
         - Name: POSTGRES_PASSWORD
@@ -1266,8 +1338,10 @@ Resources:
           Value: !Ref UserName
         - Name: SUPERSET_PASSWORD
           Value: !Ref UserPassword
+        - Name: SECRET_KEY
+          Value: !Sub '{{resolve:secretsmanager:${SupersetSecretKey}::secretkey}}'
         Essential: true
-        Image: public.ecr.aws/p9r6s5p7/superset-node:v2.0.0
+        Image: public.ecr.aws/p9r6s5p7/superset-node:latest
         LinuxParameters: {}
         LogConfiguration:
           LogDriver: awslogs
@@ -1452,8 +1526,18 @@ Resources:
           Value: "5432"
         - Name: DATABASE_USER
           Value: superset
-        - Name: FLASK_ENV
-          Value: development
+        - Name: EXAMPLES_DB
+          Value: examples
+        - Name: EXAMPLES_HOST
+          Value: db
+        - Name: EXAMPLES_USER
+          Value: examples
+        - Name: EXAMPLES_PASSWORD
+          Value: examples
+        - Name: EXAMPLES_PORT
+          Value: "5432"
+        - Name: FLASK_DEBUG
+          Value: true
         - Name: POSTGRES_DB
           Value: superset
         - Name: POSTGRES_PASSWORD
@@ -1476,8 +1560,10 @@ Resources:
           Value: !Ref UserName
         - Name: SUPERSET_PASSWORD
           Value: !Ref UserPassword
+        - Name: SECRET_KEY
+          Value: !Sub '{{resolve:secretsmanager:${SupersetSecretKey}::secretkey}}'
         Essential: true
-        Image: public.ecr.aws/p9r6s5p7/superset:v2.0.0
+        Image: public.ecr.aws/p9r6s5p7/superset:latest
         LinuxParameters: {}
         LogConfiguration:
           LogDriver: awslogs
@@ -1666,8 +1752,18 @@ Resources:
           Value: "5432"
         - Name: DATABASE_USER
           Value: superset
-        - Name: FLASK_ENV
-          Value: development
+        - Name: EXAMPLES_DB
+          Value: examples
+        - Name: EXAMPLES_HOST
+          Value: db
+        - Name: EXAMPLES_USER
+          Value: examples
+        - Name: EXAMPLES_PASSWORD
+          Value: examples
+        - Name: EXAMPLES_PORT
+          Value: "5432"
+        - Name: FLASK_DEBUG
+          Value: true
         - Name: POSTGRES_DB
           Value: superset
         - Name: POSTGRES_PASSWORD
@@ -1690,8 +1786,10 @@ Resources:
           Value: !Ref UserName
         - Name: SUPERSET_PASSWORD
           Value: !Ref UserPassword
+        - Name: SECRET_KEY
+          Value: !Sub '{{resolve:secretsmanager:${SupersetSecretKey}::secretkey}}'
         Essential: true
-        Image: public.ecr.aws/p9r6s5p7/superset:v2.0.0
+        Image: public.ecr.aws/p9r6s5p7/superset:latest
         LinuxParameters: {}
         LogConfiguration:
           LogDriver: awslogs
