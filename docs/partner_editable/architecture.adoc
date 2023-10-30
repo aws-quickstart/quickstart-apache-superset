@@ -6,7 +6,7 @@ AWS Cloud.
 
 [#architecture1]
 .Quick Start architecture for {partner-product-short-name} on AWS
-image::../images/architecture_diagram.png[Architecture]
+image::../images/architecture_diagram_2.png[Architecture]
 
 As shown in <<architecture1>>, the Quick Start sets up the following:
 
@@ -19,8 +19,9 @@ best practices, to provide you with your own virtual network on AWS.*
 ** An Amazon ECS cluster using AWS Fargate to provide all Superset functions, including the core system, cache, database, message queue, and frontend.
 ** Amazon EFS to provide metadata, query cached-data persistency, and share service modules.
 ** AWS Cloud Map, a discovery service for application resources.
+** AWS Secrets Manager gerete and store a key as "SECRET_KEY" for securely signing the session cookie and encrypting sensitive information on the database.
 * Amazon Athena, a serverless, interactive service to query data and analyze big data in Amazon S3 using standard SQL.
 * Amazon Redshift, a fully managed, data-warehouse service.
-* Supported database systems, such as Amazon Athena, Amazon Redshift, ClickHouse, MySQL, and PostgreSQL.
+* Supported database systems, such as Amazon Athena, Amazon Redshift, Amazon DynamoDB, ClickHouse, MySQL, and PostgreSQL.
 
 [.small]#* The template that deploys the Quick Start into an existing VPC skips the components marked by asterisks and prompts you for your existing VPC configuration.#
